@@ -69,6 +69,11 @@ namespace NoiseLab.PolyGen.Core.Builders
             return new Schema(tables, relationships);
         }
 
+        public TableBuilder Table(string name)
+        {
+            return Table("dbo", name);
+        }
+
         public TableBuilder Table(string schema, string name)
         {
             schema.ThrowIfNullOrWhitespace(nameof(schema));

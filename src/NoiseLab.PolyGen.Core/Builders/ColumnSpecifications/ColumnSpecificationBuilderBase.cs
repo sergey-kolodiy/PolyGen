@@ -22,6 +22,11 @@ namespace NoiseLab.PolyGen.Core.Builders.ColumnSpecifications
             return _columnFactory.Relationship(name);
         }
 
+        public Schema Build()
+        {
+            return _columnFactory.Build();
+        }
+
         protected internal abstract AbstractDataType DataType { get; }
         protected internal int? MaxLengthInternal { get; private set; }
         protected internal bool NullableInternal { get; private set; }
