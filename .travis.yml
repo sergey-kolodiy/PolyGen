@@ -1,0 +1,13 @@
+language: csharp
+solution: NoiseLab.PolyGen.sln
+mono: none
+dotnet: 1.0.3
+dist: trusty
+branches:
+  only:
+    - master
+    - develop
+script:
+ - dotnet restore
+ - dotnet build
+ - dotnet test ./test/**.UnitTests/
