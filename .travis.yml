@@ -10,5 +10,3 @@ branches:
 script:
  - dotnet restore
  - dotnet build
- - dotnet test ./test/NoiseLab.Common.UnitTests/
- - dotnet test ./test/NoiseLab.PolyGen.Core.UnitTests/
