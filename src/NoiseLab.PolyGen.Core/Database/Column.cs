@@ -32,7 +32,7 @@ namespace NoiseLab.PolyGen.Core.Database
         internal PropertyDeclarationSyntax GeneratePropertyForOrmModel()
         {
             /*
-             * [Column("Property",Order=0)]                      - required
+             * [Column("Property", Order=0)]                     - required
              * [DatabaseGenerated(DatabaseGeneratedOption.None)] - required
              * [StringLength(9)]                                 - optional
              * [Required]                                        - optional

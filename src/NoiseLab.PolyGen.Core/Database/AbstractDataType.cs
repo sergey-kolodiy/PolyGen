@@ -4,7 +4,7 @@
     {
         public override string ToString()
         {
-            return Name;
+            return _name;
         }
 
         public static AbstractDataType Byte { get; } = new AbstractDataType("Byte", ClrDataType.Byte, ClrDataType.NullableByte);
@@ -37,15 +37,15 @@
             return nullable ? _nullableClrType : _clrType;
         }
 
-        internal string Name { get; }
 
         private AbstractDataType(string name, ClrDataType clrType, ClrDataType nullableClrType)
         {
-            Name = name;
+            _name = name;
             _clrType = clrType;
             _nullableClrType = nullableClrType;
         }
 
+        private readonly string _name;
         private readonly ClrDataType _clrType;
         private readonly ClrDataType _nullableClrType;
     }
