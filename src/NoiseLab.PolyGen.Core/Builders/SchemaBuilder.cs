@@ -2,21 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NoiseLab.Common.Extensions;
+using NoiseLab.PolyGen.Core.Builders.Relationships;
 using NoiseLab.PolyGen.Core.Database;
 
-namespace NoiseLab.PolyGen.Core.Factories
+namespace NoiseLab.PolyGen.Core.Builders
 {
-    public class SchemaFactory : FactoryBase
+    public class SchemaBuilder : BuilderBase
     {
-        public static SchemaFactory Create()
+        public static SchemaBuilder Create()
         {
-            return new SchemaFactory();
+            return new SchemaBuilder();
         }
         
-        private readonly List<TableFactory> _tableFactories = new List<TableFactory>();
-        private readonly List<RelationshipFactory> _relationshipFactories = new List<RelationshipFactory>();
+        private readonly List<TableBuilder> _tableFactories = new List<TableBuilder>();
+        private readonly List<RelationshipBuilder> _relationshipFactories = new List<RelationshipBuilder>();
         
-        internal RelationshipFactory Relationship(string name, string primaryKeyTableSchema, string primaryKeyTableName, string foreignKeyTableSchema, string foreignKeyTableName)
+        internal RelationshipBuilder Relationship(string name)
         {
             // Relationship name must be unique.
             if (DefinesRelationship(name))
@@ -24,7 +25,7 @@ namespace NoiseLab.PolyGen.Core.Factories
                 throw new InvalidOperationException($"Relationship \"{name}\" is already defined for this database.");
             }
 
-            var relationshipFactory = new RelationshipFactory(this, name, primaryKeyTableSchema, primaryKeyTableName, foreignKeyTableSchema, foreignKeyTableName);
+            var relationshipFactory = new RelationshipBuilder(this, name);
             _relationshipFactories.Add(relationshipFactory);
             return relationshipFactory;
         }
@@ -34,14 +35,14 @@ namespace NoiseLab.PolyGen.Core.Factories
             return _relationshipFactories.Any(rf => rf.DefinesRelationship(name));
         }
 
-        internal TableFactory GetTableFactory(string schema, string name)
+        internal TableBuilder GetTableFactory(string schema, string name)
         {
             return _tableFactories.FirstOrDefault(tf => tf.DefinesTable(schema, name));
         }
 
-        internal ColumnFactory GetColumnFactory(string tableSchema, string tableName, string columnName)
+        internal ColumnBuilder GetColumnFactory(string tableSchema, string tableName, string columnName)
         {
-            ColumnFactory result = null;
+            ColumnBuilder result = null;
             var tableFactory = GetTableFactory(tableSchema, tableName);
             if (tableFactory != null)
             {
@@ -68,7 +69,7 @@ namespace NoiseLab.PolyGen.Core.Factories
             return new Schema(tables, relationships);
         }
 
-        public TableFactory Table(string schema, string name)
+        public TableBuilder Table(string schema, string name)
         {
             schema.ThrowIfNullOrWhitespace(nameof(schema));
             name.ThrowIfNullOrWhitespace(nameof(name));
@@ -80,7 +81,7 @@ namespace NoiseLab.PolyGen.Core.Factories
                 throw new InvalidOperationException($"Table \"{schema}.{name}\" already exists.");
             }
 
-            var tableFactory = new TableFactory(this, schema, name);
+            var tableFactory = new TableBuilder(this, schema, name);
             _tableFactories.Add(tableFactory);
             return tableFactory;
         }

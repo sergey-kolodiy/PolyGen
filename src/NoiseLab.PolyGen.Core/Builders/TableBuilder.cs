@@ -2,56 +2,52 @@
 using System.Collections.Generic;
 using System.Linq;
 using NoiseLab.Common.Extensions;
+using NoiseLab.PolyGen.Core.Builders.Relationships;
 using NoiseLab.PolyGen.Core.Database;
 
-namespace NoiseLab.PolyGen.Core.Factories
+namespace NoiseLab.PolyGen.Core.Builders
 {
-    public class TableFactory : FactoryBase
+    public class TableBuilder : BuilderBase
     {
         private readonly string _schema;
         private readonly string _name;
-        private readonly List<ColumnFactory> _columnFactories = new List<ColumnFactory>();
+        private readonly List<ColumnBuilder> _columnFactories = new List<ColumnBuilder>();
         private int _ordinal;
-        private readonly SchemaFactory _schemaFactory;
+        private readonly SchemaBuilder _schemaFactory;
         private Table _table;
         private string FullName => $"{_schema}.{_name}";
 
-        internal TableFactory(SchemaFactory schemaFactory, string schema, string name)
+        internal TableBuilder(SchemaBuilder schemaFactory, string schema, string name)
         {
             _schema = schema;
             _name = name;
             _schemaFactory = schemaFactory;
         }
 
-        public ColumnFactory Column(string name, AbstractDataType dataType)
+        public ColumnBuilder Column(string name)
         {
             name.ThrowIfNullOrWhitespace(nameof(name));
             DefaultNamePattern.ThrowIfDoesNotMatch(name, nameof(name));
-            dataType.ThrowIfNull(nameof(dataType));
 
             if (DefinesColumn(name))
             {
                 throw new InvalidOperationException($"Column \"{name}\" is already defined for table \"{FullName}\".");
             }
 
-            var columnFactory = new ColumnFactory(this, _ordinal++, name, dataType);
+            var columnFactory = new ColumnBuilder(this, _ordinal++, name);
             _columnFactories.Add(columnFactory);
             return columnFactory;
         }
 
-        internal RelationshipFactory Relationship(string name, string primaryKeyTableSchema, string primaryKeyTableName, string foreignKeyTableSchema, string foreignKeyTableName)
+        internal RelationshipBuilder Relationship(string name)
         {
             name.ThrowIfNullOrWhitespace(nameof(name));
             DefaultNamePattern.ThrowIfDoesNotMatch(name, nameof(name));
-            primaryKeyTableSchema.ThrowIfNullOrWhitespace(nameof(primaryKeyTableSchema));
-            primaryKeyTableName.ThrowIfNullOrWhitespace(nameof(primaryKeyTableName));
-            foreignKeyTableSchema.ThrowIfNullOrWhitespace(nameof(foreignKeyTableSchema));
-            foreignKeyTableName.ThrowIfNullOrWhitespace(nameof(foreignKeyTableName));
 
-            return _schemaFactory.Relationship(name, primaryKeyTableSchema, primaryKeyTableName, foreignKeyTableSchema, foreignKeyTableName);
+            return _schemaFactory.Relationship(name);
         }
 
-        internal TableFactory Table(string schema, string name)
+        internal TableBuilder Table(string schema, string name)
         {
             ThrowIfTableContainsSingleComputedColumn();
             ThrowIfTableContainsMoreThanOneRowVersionColumn();
@@ -83,7 +79,7 @@ namespace NoiseLab.PolyGen.Core.Factories
             return _schema.Equals(schema, StringComparison.OrdinalIgnoreCase) && _name.Equals(name, StringComparison.OrdinalIgnoreCase);
         }
 
-        internal ColumnFactory GetColumnFactory(string columnName)
+        internal ColumnBuilder GetColumnFactory(string columnName)
         {
             return _columnFactories.FirstOrDefault(cf => cf.IsNamed(columnName));
         }
