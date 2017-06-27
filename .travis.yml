@@ -10,4 +10,3 @@ branches:
 script:
  - dotnet restore
  - dotnet build
- - dotnet test ./test/**.UnitTests/

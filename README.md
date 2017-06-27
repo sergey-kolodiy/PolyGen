@@ -2,6 +2,7 @@
 
 PolyGen is a code generator that produces ORM layer, REST API and a user interface for your database.
 
+[![Build Status](https://travis-ci.org/dr-noise/PolyGen.svg?branch=master)](https://travis-ci.org/dr-noise/PolyGen)
 ## Getting Started
 
 1. Define your database structure using Fluent API:
