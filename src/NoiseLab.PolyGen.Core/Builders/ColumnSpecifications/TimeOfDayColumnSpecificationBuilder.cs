@@ -30,8 +30,8 @@ namespace NoiseLab.PolyGen.Core.Builders.ColumnSpecifications
 
         protected internal override AbstractDataType DataType { get; } = AbstractDataType.TimeOfDay;
 
-        internal TimeOfDayColumnSpecificationBuilder(ColumnBuilder columnFactory)
-            : base(columnFactory)
+        internal TimeOfDayColumnSpecificationBuilder(ColumnBuilder columnBuilder)
+            : base(columnBuilder)
         {
         }
     }

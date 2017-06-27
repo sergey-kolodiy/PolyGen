@@ -4,42 +4,42 @@ namespace NoiseLab.PolyGen.Core.Builders.Relationships
 {
     public class ReferenceBuilder : BuilderBase
     {
-        internal ReferenceBuilder(RelationshipBuilder relationshipFactory, string primaryKeyColumnName, string foreignKeyColumnName)
-        {
-            PrimaryKeyColumnName = primaryKeyColumnName;
-            ForeignKeyColumnName = foreignKeyColumnName;
-            _relationshipFactory = relationshipFactory;
-        }
-
-        internal readonly string PrimaryKeyColumnName;
-        internal readonly string ForeignKeyColumnName;
-        private readonly RelationshipBuilder _relationshipFactory;
-
         public ReferenceBuilder Reference(string foreignKeyColumnName, string primaryKeyColumnName)
         {
-            return _relationshipFactory.Reference(foreignKeyColumnName, primaryKeyColumnName);
+            return _relationshipBuilder.Reference(foreignKeyColumnName, primaryKeyColumnName);
         }
 
         public RelationshipBuilder Relationship(string name)
         {
-            return _relationshipFactory.Relationship(name);
+            return _relationshipBuilder.Relationship(name);
         }
 
         public DeleteBehaviorBuilder OnDeleteCascade()
         {
-            _relationshipFactory.OnDeleteCascade();
+            _relationshipBuilder.OnDeleteCascade();
             return new DeleteBehaviorBuilder(this);
         }
 
         public DeleteBehaviorBuilder OnDeleteSetNull()
         {
-            _relationshipFactory.OnDeleteSetNull();
+            _relationshipBuilder.OnDeleteSetNull();
             return new DeleteBehaviorBuilder(this);
         }
 
         public Schema Build()
         {
-            return _relationshipFactory.Build();
+            return _relationshipBuilder.Build();
         }
+
+        internal ReferenceBuilder(RelationshipBuilder relationshipBuilder, string primaryKeyColumnName, string foreignKeyColumnName)
+        {
+            PrimaryKeyColumnName = primaryKeyColumnName;
+            ForeignKeyColumnName = foreignKeyColumnName;
+            _relationshipBuilder = relationshipBuilder;
+        }
+
+        internal readonly string PrimaryKeyColumnName;
+        internal readonly string ForeignKeyColumnName;
+        private readonly RelationshipBuilder _relationshipBuilder;
     }
 }

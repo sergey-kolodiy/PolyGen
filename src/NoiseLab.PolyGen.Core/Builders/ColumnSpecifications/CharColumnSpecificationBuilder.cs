@@ -30,8 +30,8 @@ namespace NoiseLab.PolyGen.Core.Builders.ColumnSpecifications
 
         protected internal override AbstractDataType DataType { get; } = AbstractDataType.Char;
 
-        internal CharColumnSpecificationBuilder(ColumnBuilder columnFactory)
-            : base(columnFactory)
+        internal CharColumnSpecificationBuilder(ColumnBuilder columnBuilder)
+            : base(columnBuilder)
         {
             // TODO: Is it really required to explicitly set MaxLength for System.Char property?
             MaxLength(1);

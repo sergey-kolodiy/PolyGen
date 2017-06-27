@@ -14,8 +14,8 @@ namespace NoiseLab.PolyGen.Core.Builders
             return new SchemaBuilder();
         }
         
-        private readonly List<TableBuilder> _tableFactories = new List<TableBuilder>();
-        private readonly List<RelationshipBuilder> _relationshipFactories = new List<RelationshipBuilder>();
+        private readonly List<TableBuilder> _tableBuilders = new List<TableBuilder>();
+        private readonly List<RelationshipBuilder> _relationshipBuilders = new List<RelationshipBuilder>();
         
         internal RelationshipBuilder Relationship(string name)
         {
@@ -25,28 +25,28 @@ namespace NoiseLab.PolyGen.Core.Builders
                 throw new InvalidOperationException($"Relationship \"{name}\" is already defined for this database.");
             }
 
-            var relationshipFactory = new RelationshipBuilder(this, name);
-            _relationshipFactories.Add(relationshipFactory);
-            return relationshipFactory;
+            var relationshipBuilder = new RelationshipBuilder(this, name);
+            _relationshipBuilders.Add(relationshipBuilder);
+            return relationshipBuilder;
         }
 
         private bool DefinesRelationship(string name)
         {
-            return _relationshipFactories.Any(rf => rf.DefinesRelationship(name));
+            return _relationshipBuilders.Any(rf => rf.DefinesRelationship(name));
         }
 
-        internal TableBuilder GetTableFactory(string schema, string name)
+        internal TableBuilder GetTableBuilder(string schema, string name)
         {
-            return _tableFactories.FirstOrDefault(tf => tf.DefinesTable(schema, name));
+            return _tableBuilders.FirstOrDefault(tf => tf.DefinesTable(schema, name));
         }
 
-        internal ColumnBuilder GetColumnFactory(string tableSchema, string tableName, string columnName)
+        internal ColumnBuilder GetColumnBuilder(string tableSchema, string tableName, string columnName)
         {
             ColumnBuilder result = null;
-            var tableFactory = GetTableFactory(tableSchema, tableName);
-            if (tableFactory != null)
+            var tableBuilder = GetTableBuilder(tableSchema, tableName);
+            if (tableBuilder != null)
             {
-                result = tableFactory.GetColumnFactory(columnName);
+                result = tableBuilder.GetColumnBuilder(columnName);
             }
             return result;
         }
@@ -58,8 +58,8 @@ namespace NoiseLab.PolyGen.Core.Builders
             // - Primary key table & column must exist.
             // - Computed columns cannot contribute to foreign keys.
 
-            var tables = _tableFactories.Select(tf => tf.BuildTable()).ToList();
-            var relationships = _relationshipFactories.Select(rf => rf.BuildRelationship()).ToList();
+            var tables = _tableBuilders.Select(tf => tf.BuildTable()).ToList();
+            var relationships = _relationshipBuilders.Select(rf => rf.BuildRelationship()).ToList();
 
             foreach (var relationship in relationships)
             {
@@ -81,14 +81,14 @@ namespace NoiseLab.PolyGen.Core.Builders
             DefaultNamePattern.ThrowIfDoesNotMatch(schema, nameof(schema));
             DefaultNamePattern.ThrowIfDoesNotMatch(name, nameof(name));
 
-            if (_tableFactories.Any(tf => tf.DefinesTable(schema, name)))
+            if (_tableBuilders.Any(tf => tf.DefinesTable(schema, name)))
             {
                 throw new InvalidOperationException($"Table \"{schema}.{name}\" already exists.");
             }
 
-            var tableFactory = new TableBuilder(this, schema, name);
-            _tableFactories.Add(tableFactory);
-            return tableFactory;
+            var tableBuilder = new TableBuilder(this, schema, name);
+            _tableBuilders.Add(tableBuilder);
+            return tableBuilder;
         }
     }
 }

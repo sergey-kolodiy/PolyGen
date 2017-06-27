@@ -30,8 +30,8 @@ namespace NoiseLab.PolyGen.Core.Builders.ColumnSpecifications
 
         protected internal override AbstractDataType DataType { get; } = AbstractDataType.Int64;
 
-        internal Int64ColumnSpecificationBuilder(ColumnBuilder columnFactory)
-            : base(columnFactory)
+        internal Int64ColumnSpecificationBuilder(ColumnBuilder columnBuilder)
+            : base(columnBuilder)
         {
         }
     }

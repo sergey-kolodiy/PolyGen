@@ -8,10 +8,15 @@ namespace NoiseLab.PolyGen.Core.Builders.Relationships
 {
     public class RelationshipBuilder : BuilderBase
     {
-        internal RelationshipBuilder(SchemaBuilder databaseFactory, string name)
+        public FromRelationshipTableBuilder From(string tableSchema, string tableName)
+        {
+            return _fromRelationshipTableBuilder = new FromRelationshipTableBuilder(this, tableSchema, tableName);
+        }
+
+        internal RelationshipBuilder(SchemaBuilder databaseBuilder, string name)
         {
             _name = name;
-            _databaseFactory = databaseFactory;
+            _databaseBuilder = databaseBuilder;
         }
 
         private readonly string _name;
@@ -19,13 +24,8 @@ namespace NoiseLab.PolyGen.Core.Builders.Relationships
         private ToRelationshipTableBuilder _toRelationshipTableBuilder;
         private bool _onDeleteCascade;
         private bool _onDeleteSetNull;
-        private readonly List<ReferenceBuilder> _referenceFactories = new List<ReferenceBuilder>();
-        private readonly SchemaBuilder _databaseFactory;
-
-        public FromRelationshipTableBuilder From(string tableSchema, string tableName)
-        {
-            return _fromRelationshipTableBuilder = new FromRelationshipTableBuilder(this, tableSchema, tableName);
-        }
+        private readonly List<ReferenceBuilder> _referenceBuilders = new List<ReferenceBuilder>();
+        private readonly SchemaBuilder _databaseBuilder;
 
         internal ToRelationshipTableBuilder To(string tableSchema, string tableName)
         {
@@ -37,9 +37,9 @@ namespace NoiseLab.PolyGen.Core.Builders.Relationships
             foreignKeyColumnName.ThrowIfNullOrWhitespace(nameof(foreignKeyColumnName));
             primaryKeyColumnName.ThrowIfNullOrWhitespace(nameof(primaryKeyColumnName));
 
-            var referenceFactory = new ReferenceBuilder(this, primaryKeyColumnName, foreignKeyColumnName);
-            _referenceFactories.Add(referenceFactory);
-            return referenceFactory;
+            var referenceBuilder = new ReferenceBuilder(this, primaryKeyColumnName, foreignKeyColumnName);
+            _referenceBuilders.Add(referenceBuilder);
+            return referenceBuilder;
         }
 
         internal RelationshipBuilder OnDeleteCascade()
@@ -58,13 +58,13 @@ namespace NoiseLab.PolyGen.Core.Builders.Relationships
             {
                 throw new InvalidOperationException($"Cannot set up SetNull delete behavior for relationship \"{_name}\" because Cascade delete behavior has already been specified.");
             }
-            foreach (var referenceFactory in _referenceFactories)
+            foreach (var referenceBuilder in _referenceBuilders)
             {
-                var column = _databaseFactory.GetColumnFactory(_fromRelationshipTableBuilder.TableSchema, _fromRelationshipTableBuilder.TableName,
-                    referenceFactory.ForeignKeyColumnName);
+                var column = _databaseBuilder.GetColumnBuilder(_fromRelationshipTableBuilder.TableSchema, _fromRelationshipTableBuilder.TableName,
+                    referenceBuilder.ForeignKeyColumnName);
                 if (!column.IsNullable())
                 {
-                    throw new InvalidOperationException($"Cannot set up SetNull delete behavior for relationship \"{_name}\" bacause foreign key column \"{referenceFactory.ForeignKeyColumnName}\" is not nullable.");
+                    throw new InvalidOperationException($"Cannot set up SetNull delete behavior for relationship \"{_name}\" bacause foreign key column \"{referenceBuilder.ForeignKeyColumnName}\" is not nullable.");
                 }
             }
 
@@ -74,58 +74,58 @@ namespace NoiseLab.PolyGen.Core.Builders.Relationships
 
         internal RelationshipBuilder Relationship(string name)
         {
-            return _databaseFactory.Relationship(name);
+            return _databaseBuilder.Relationship(name);
         }
 
         internal Schema Build()
         {
-            return _databaseFactory.Build();
+            return _databaseBuilder.Build();
         }
 
         internal Relationship BuildRelationship()
         {
-            var primaryKeyTableFactory = _databaseFactory.GetTableFactory(_toRelationshipTableBuilder.TableSchema, _toRelationshipTableBuilder.TableName);
-            if (primaryKeyTableFactory == null)
+            var primaryKeyTableBuilder = _databaseBuilder.GetTableBuilder(_toRelationshipTableBuilder.TableSchema, _toRelationshipTableBuilder.TableName);
+            if (primaryKeyTableBuilder == null)
             {
                 throw new InvalidOperationException($"Invalid relationship definition: \"{_name}\". Primary key table \"{_toRelationshipTableBuilder.TableSchema}.{_toRelationshipTableBuilder.TableName}\" is not defined.");
             }
 
-            var foreignKeyTableFactory = _databaseFactory.GetTableFactory(_fromRelationshipTableBuilder.TableSchema, _fromRelationshipTableBuilder.TableName);
-            if (foreignKeyTableFactory == null)
+            var foreignKeyTableBuilder = _databaseBuilder.GetTableBuilder(_fromRelationshipTableBuilder.TableSchema, _fromRelationshipTableBuilder.TableName);
+            if (foreignKeyTableBuilder == null)
             {
                 throw new InvalidOperationException($"Invalid relationship definition: \"{_name}\". Foreign key table \"{_fromRelationshipTableBuilder.TableSchema}.{_fromRelationshipTableBuilder.TableName}\" is not defined.");
             }
 
-            var references = _referenceFactories.Select(r => BuildReference(r, primaryKeyTableFactory, foreignKeyTableFactory)).ToList();
+            var references = _referenceBuilders.Select(r => BuildReference(r, primaryKeyTableBuilder, foreignKeyTableBuilder)).ToList();
 
-            var primaryKeyTable = primaryKeyTableFactory.BuildTable();
-            var foreignKeyTable = foreignKeyTableFactory.BuildTable();
+            var primaryKeyTable = primaryKeyTableBuilder.BuildTable();
+            var foreignKeyTable = foreignKeyTableBuilder.BuildTable();
 
             return new Relationship(_name, _onDeleteCascade, _onDeleteSetNull, primaryKeyTable, foreignKeyTable, references);
+
+            Reference BuildReference(ReferenceBuilder referenceBuilder, TableBuilder pkTableBuilder, TableBuilder fkTableBuilder)
+            {
+                var primaryKeyColumn = pkTableBuilder.GetColumnBuilder(referenceBuilder.PrimaryKeyColumnName);
+                if (primaryKeyColumn == null)
+                {
+                    throw new InvalidOperationException($"Invalid relationship definition: \"{_name}\". Column \"{referenceBuilder.PrimaryKeyColumnName}\" is not defined in primary key table \"{_toRelationshipTableBuilder.TableSchema}.{_toRelationshipTableBuilder.TableName}\".");
+                }
+
+                var foreignKeyColumn = fkTableBuilder.GetColumnBuilder(referenceBuilder.ForeignKeyColumnName);
+                if (foreignKeyColumn == null)
+                {
+                    throw new InvalidOperationException($"Invalid relationship definition: \"{_name}\". Column \"{referenceBuilder.ForeignKeyColumnName}\" is not defined in foreign key table \"{_fromRelationshipTableBuilder.TableSchema}.{_fromRelationshipTableBuilder.TableName}\".");
+                }
+
+                primaryKeyColumn.CheckReference(foreignKeyColumn);
+
+                return new Reference(primaryKeyColumn.BuildColumn(), foreignKeyColumn.BuildColumn());
+            }
         }
 
         internal bool DefinesRelationship(string name)
         {
             return _name.Equals(name, StringComparison.OrdinalIgnoreCase);
-        }
-
-        private Reference BuildReference(ReferenceBuilder referenceFactory, TableBuilder primaryKeyTable, TableBuilder foreignKeyTable)
-        {
-            var primaryKeyColumn = primaryKeyTable.GetColumnFactory(referenceFactory.PrimaryKeyColumnName);
-            if (primaryKeyColumn == null)
-            {
-                throw new InvalidOperationException($"Invalid relationship definition: \"{_name}\". Column \"{referenceFactory.PrimaryKeyColumnName}\" is not defined in primary key table \"{_toRelationshipTableBuilder.TableSchema}.{_toRelationshipTableBuilder.TableName}\".");
-            }
-
-            var foreignKeyColumn = foreignKeyTable.GetColumnFactory(referenceFactory.ForeignKeyColumnName);
-            if (foreignKeyColumn == null)
-            {
-                throw new InvalidOperationException($"Invalid relationship definition: \"{_name}\". Column \"{referenceFactory.ForeignKeyColumnName}\" is not defined in foreign key table \"{_fromRelationshipTableBuilder.TableSchema}.{_fromRelationshipTableBuilder.TableName}\".");
-            }
-
-            primaryKeyColumn.CheckReference(foreignKeyColumn);
-
-            return new Reference(primaryKeyColumn.BuildColumn(), foreignKeyColumn.BuildColumn());
         }
     }
 }

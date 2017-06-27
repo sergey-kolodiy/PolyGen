@@ -9,176 +9,176 @@ namespace NoiseLab.PolyGen.Core.Builders
     {
         public ByteColumnSpecificationBuilder Byte()
         {
-            var factory = new ByteColumnSpecificationBuilder(this);
-            _columnSpecificationFactory = factory;
-            return factory;
+            var builder = new ByteColumnSpecificationBuilder(this);
+            _columnSpecificationBuilder = builder;
+            return builder;
         }
 
         public Int16ColumnSpecificationBuilder Int16()
         {
-            var factory = new Int16ColumnSpecificationBuilder(this);
-            _columnSpecificationFactory = factory;
-            return factory;
+            var builder = new Int16ColumnSpecificationBuilder(this);
+            _columnSpecificationBuilder = builder;
+            return builder;
         }
 
         public Int32ColumnSpecificationBuilder Int32()
         {
-            var factory = new Int32ColumnSpecificationBuilder(this);
-            _columnSpecificationFactory = factory;
-            return factory;
+            var builder = new Int32ColumnSpecificationBuilder(this);
+            _columnSpecificationBuilder = builder;
+            return builder;
         }
 
         public Int64ColumnSpecificationBuilder Int64()
         {
-            var factory = new Int64ColumnSpecificationBuilder(this);
-            _columnSpecificationFactory = factory;
-            return factory;
+            var builder = new Int64ColumnSpecificationBuilder(this);
+            _columnSpecificationBuilder = builder;
+            return builder;
         }
 
         public GuidColumnSpecificationBuilder Guid()
         {
-            var factory = new GuidColumnSpecificationBuilder(this);
-            _columnSpecificationFactory = factory;
-            return factory;
+            var builder = new GuidColumnSpecificationBuilder(this);
+            _columnSpecificationBuilder = builder;
+            return builder;
         }
 
         public BooleanColumnSpecificationBuilder Boolean()
         {
-            var factory = new BooleanColumnSpecificationBuilder(this);
-            _columnSpecificationFactory = factory;
-            return factory;
+            var boolean = new BooleanColumnSpecificationBuilder(this);
+            _columnSpecificationBuilder = boolean;
+            return boolean;
         }
 
         public DateColumnSpecificationBuilder Date()
         {
-            var factory = new DateColumnSpecificationBuilder(this);
-            _columnSpecificationFactory = factory;
-            return factory;
+            var builder = new DateColumnSpecificationBuilder(this);
+            _columnSpecificationBuilder = builder;
+            return builder;
         }
 
         public DateTimeColumnSpecificationBuilder DateTime()
         {
-            var factory = new DateTimeColumnSpecificationBuilder(this);
-            _columnSpecificationFactory = factory;
-            return factory;
+            var builder = new DateTimeColumnSpecificationBuilder(this);
+            _columnSpecificationBuilder = builder;
+            return builder;
         }
 
         public DateTimeOffsetColumnSpecificationBuilder DateTimeOffset()
         {
-            var factory = new DateTimeOffsetColumnSpecificationBuilder(this);
-            _columnSpecificationFactory = factory;
-            return factory;
+            var builder = new DateTimeOffsetColumnSpecificationBuilder(this);
+            _columnSpecificationBuilder = builder;
+            return builder;
         }
 
         public TimeOfDayColumnSpecificationBuilder TimeOfDay()
         {
-            var factory = new TimeOfDayColumnSpecificationBuilder(this);
-            _columnSpecificationFactory = factory;
-            return factory;
+            var builder = new TimeOfDayColumnSpecificationBuilder(this);
+            _columnSpecificationBuilder = builder;
+            return builder;
         }
 
         public TimeSpanColumnSpecificationBuilder TimeSpan()
         {
-            var factory = new TimeSpanColumnSpecificationBuilder(this);
-            _columnSpecificationFactory = factory;
-            return factory;
+            var builder = new TimeSpanColumnSpecificationBuilder(this);
+            _columnSpecificationBuilder = builder;
+            return builder;
         }
 
         public CharColumnSpecificationBuilder Char()
         {
-            var factory = new CharColumnSpecificationBuilder(this);
-            _columnSpecificationFactory = factory;
-            return factory;
+            var builder = new CharColumnSpecificationBuilder(this);
+            _columnSpecificationBuilder = builder;
+            return builder;
         }
 
         public SingleColumnSpecificationBuilder Single()
         {
-            var factory = new SingleColumnSpecificationBuilder(this);
-            _columnSpecificationFactory = factory;
-            return factory;
+            var builder = new SingleColumnSpecificationBuilder(this);
+            _columnSpecificationBuilder = builder;
+            return builder;
         }
 
         public DoubleColumnSpecificationBuilder Double()
         {
-            var factory = new DoubleColumnSpecificationBuilder(this);
-            _columnSpecificationFactory = factory;
-            return factory;
+            var builder = new DoubleColumnSpecificationBuilder(this);
+            _columnSpecificationBuilder = builder;
+            return builder;
         }
 
         public DecimalColumnSpecificationBuilder Decimal()
         {
-            var factory = new DecimalColumnSpecificationBuilder(this);
-            _columnSpecificationFactory = factory;
-            return factory;
+            var builder = new DecimalColumnSpecificationBuilder(this);
+            _columnSpecificationBuilder = builder;
+            return builder;
         }
 
         public StringColumnSpecificationBuilder String()
         {
-            var factory = new StringColumnSpecificationBuilder(this);
-            _columnSpecificationFactory = factory;
-            return factory;
+            var builder = new StringColumnSpecificationBuilder(this);
+            _columnSpecificationBuilder = builder;
+            return builder;
         }
 
         public TextColumnSpecificationBuilder Text()
         {
-            var factory = new TextColumnSpecificationBuilder(this);
-            _columnSpecificationFactory = factory;
-            return factory;
+            var builder = new TextColumnSpecificationBuilder(this);
+            _columnSpecificationBuilder = builder;
+            return builder;
         }
 
         public JsonColumnSpecificationBuilder Json()
         {
-            var factory = new JsonColumnSpecificationBuilder(this);
-            _columnSpecificationFactory = factory;
-            return factory;
+            var builder = new JsonColumnSpecificationBuilder(this);
+            _columnSpecificationBuilder = builder;
+            return builder;
         }
 
         public XmlColumnSpecificationBuilder Xml()
         {
-            var factory = new XmlColumnSpecificationBuilder(this);
-            _columnSpecificationFactory = factory;
-            return factory;
+            var builder = new XmlColumnSpecificationBuilder(this);
+            _columnSpecificationBuilder = builder;
+            return builder;
         }
 
         public BinaryColumnSpecificationBuilder Binary()
         {
-            var factory = new BinaryColumnSpecificationBuilder(this);
-            _columnSpecificationFactory = factory;
-            return factory;
+            var builder = new BinaryColumnSpecificationBuilder(this);
+            _columnSpecificationBuilder = builder;
+            return builder;
         }
 
         public ImageColumnSpecificationBuilder Image()
         {
-            var factory = new ImageColumnSpecificationBuilder(this);
-            _columnSpecificationFactory = factory;
-            return factory;
+            var builder = new ImageColumnSpecificationBuilder(this);
+            _columnSpecificationBuilder = builder;
+            return builder;
         }
 
         public RowVersionColumnSpecificationBuilder RowVersion()
         {
-            var factory = new RowVersionColumnSpecificationBuilder(this);
-            _columnSpecificationFactory = factory;
-            return factory;
+            var builder = new RowVersionColumnSpecificationBuilder(this);
+            _columnSpecificationBuilder = builder;
+            return builder;
         }
 
         internal ColumnBuilder Column(string name)
         {
-            return _tableFactory.Column(name);
+            return _tableBuilder.Column(name);
         }
 
         internal TableBuilder Table(string schema, string name)
         {
-            return _tableFactory.Table(schema, name);
+            return _tableBuilder.Table(schema, name);
         }
 
         internal RelationshipBuilder Relationship(string name)
         {
-            return _tableFactory.Relationship(name);
+            return _tableBuilder.Relationship(name);
         }
 
         internal Schema Build()
         {
-            return _tableFactory.Build();
+            return _tableBuilder.Build();
         }
 
         internal Column BuildColumn()
@@ -189,12 +189,12 @@ namespace NoiseLab.PolyGen.Core.Builders
                 _column = new Column(
                     Ordinal,
                     Name,
-                    _columnSpecificationFactory.DataType,
-                    _columnSpecificationFactory.MaxLengthInternal,
-                    _columnSpecificationFactory.NullableInternal,
-                    _columnSpecificationFactory.PrimaryKeyInternal,
-                    _columnSpecificationFactory.IdentityInternal,
-                    _columnSpecificationFactory.ComputedInternal);
+                    _columnSpecificationBuilder.DataType,
+                    _columnSpecificationBuilder.MaxLengthInternal,
+                    _columnSpecificationBuilder.NullableInternal,
+                    _columnSpecificationBuilder.PrimaryKeyInternal,
+                    _columnSpecificationBuilder.IdentityInternal,
+                    _columnSpecificationBuilder.ComputedInternal);
             }
             return _column;
         }
@@ -206,35 +206,35 @@ namespace NoiseLab.PolyGen.Core.Builders
 
         internal bool IsComputed()
         {
-            return _columnSpecificationFactory.ComputedInternal;
+            return _columnSpecificationBuilder.ComputedInternal;
         }
 
         internal bool IsRowVersion()
         {
-            return _columnSpecificationFactory.DataType == AbstractDataType.RowVersion;
+            return _columnSpecificationBuilder.DataType == AbstractDataType.RowVersion;
         }
 
         internal bool IsNullable()
         {
-            return _columnSpecificationFactory.NullableInternal;
+            return _columnSpecificationBuilder.NullableInternal;
         }
 
         internal void CheckReference(ColumnBuilder foreignKeyColumn)
         {
-            _columnSpecificationFactory.CheckReference(foreignKeyColumn._columnSpecificationFactory);
+            _columnSpecificationBuilder.CheckReference(foreignKeyColumn._columnSpecificationBuilder);
         }
 
-        internal ColumnBuilder(TableBuilder tableFactory, int ordinal, string name)
+        internal ColumnBuilder(TableBuilder tableBuilder, int ordinal, string name)
         {
-            _tableFactory = tableFactory;
+            _tableBuilder = tableBuilder;
             Ordinal = ordinal;
             Name = name;
         }
 
         internal int Ordinal { get; }
         internal string Name { get; }
-        private readonly TableBuilder _tableFactory;
-        private ColumnSpecificationBuilderBase _columnSpecificationFactory;
+        private readonly TableBuilder _tableBuilder;
+        private ColumnSpecificationBuilderBase _columnSpecificationBuilder;
         private Column _column;
     }
 }

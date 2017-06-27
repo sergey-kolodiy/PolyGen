@@ -24,8 +24,8 @@ namespace NoiseLab.PolyGen.Core.Builders.ColumnSpecifications
 
         protected internal override AbstractDataType DataType { get; } = AbstractDataType.Date;
 
-        internal DateColumnSpecificationBuilder(ColumnBuilder columnFactory)
-            : base(columnFactory)
+        internal DateColumnSpecificationBuilder(ColumnBuilder columnBuilder)
+            : base(columnBuilder)
         {
         }
     }

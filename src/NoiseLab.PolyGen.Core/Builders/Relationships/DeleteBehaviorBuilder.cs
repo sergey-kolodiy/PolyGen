@@ -6,19 +6,19 @@ namespace NoiseLab.PolyGen.Core.Builders.Relationships
     {
         public RelationshipBuilder Relationship(string name)
         {
-            return _referenceFactory.Relationship(name);
+            return _referenceBuilder.Relationship(name);
         }
 
         public Schema Build()
         {
-            return _referenceFactory.Build();
+            return _referenceBuilder.Build();
         }
 
-        internal DeleteBehaviorBuilder(ReferenceBuilder referenceFactory)
+        internal DeleteBehaviorBuilder(ReferenceBuilder referenceBuilder)
         {
-            _referenceFactory = referenceFactory;
+            _referenceBuilder = referenceBuilder;
         }
 
-        private readonly ReferenceBuilder _referenceFactory;
+        private readonly ReferenceBuilder _referenceBuilder;
     }
 }

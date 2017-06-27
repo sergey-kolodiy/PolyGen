@@ -36,8 +36,8 @@ namespace NoiseLab.PolyGen.Core.Builders.ColumnSpecifications
 
         protected internal override AbstractDataType DataType { get; } = AbstractDataType.Text;
 
-        internal TextColumnSpecificationBuilder(ColumnBuilder columnFactory)
-            : base(columnFactory)
+        internal TextColumnSpecificationBuilder(ColumnBuilder columnBuilder)
+            : base(columnBuilder)
         {
         }
     }

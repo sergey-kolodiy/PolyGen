@@ -24,8 +24,8 @@ namespace NoiseLab.PolyGen.Core.Builders.ColumnSpecifications
 
         protected internal override AbstractDataType DataType { get; } = AbstractDataType.TimeSpan;
 
-        internal TimeSpanColumnSpecificationBuilder(ColumnBuilder columnFactory)
-            : base(columnFactory)
+        internal TimeSpanColumnSpecificationBuilder(ColumnBuilder columnBuilder)
+            : base(columnBuilder)
         {
         }
     }

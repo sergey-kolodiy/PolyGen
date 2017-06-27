@@ -11,17 +11,17 @@ namespace NoiseLab.PolyGen.Core.Builders
     {
         private readonly string _schema;
         private readonly string _name;
-        private readonly List<ColumnBuilder> _columnFactories = new List<ColumnBuilder>();
+        private readonly List<ColumnBuilder> _columnBuilders = new List<ColumnBuilder>();
         private int _ordinal;
-        private readonly SchemaBuilder _schemaFactory;
+        private readonly SchemaBuilder _schemaBuilder;
         private Table _table;
         private string FullName => $"{_schema}.{_name}";
 
-        internal TableBuilder(SchemaBuilder schemaFactory, string schema, string name)
+        internal TableBuilder(SchemaBuilder schemaBuilder, string schema, string name)
         {
             _schema = schema;
             _name = name;
-            _schemaFactory = schemaFactory;
+            _schemaBuilder = schemaBuilder;
         }
 
         public ColumnBuilder Column(string name)
@@ -34,9 +34,9 @@ namespace NoiseLab.PolyGen.Core.Builders
                 throw new InvalidOperationException($"Column \"{name}\" is already defined for table \"{FullName}\".");
             }
 
-            var columnFactory = new ColumnBuilder(this, _ordinal++, name);
-            _columnFactories.Add(columnFactory);
-            return columnFactory;
+            var columnBuilder = new ColumnBuilder(this, _ordinal++, name);
+            _columnBuilders.Add(columnBuilder);
+            return columnBuilder;
         }
 
         internal RelationshipBuilder Relationship(string name)
@@ -44,7 +44,7 @@ namespace NoiseLab.PolyGen.Core.Builders
             name.ThrowIfNullOrWhitespace(nameof(name));
             DefaultNamePattern.ThrowIfDoesNotMatch(name, nameof(name));
 
-            return _schemaFactory.Relationship(name);
+            return _schemaBuilder.Relationship(name);
         }
 
         internal TableBuilder Table(string schema, string name)
@@ -52,7 +52,7 @@ namespace NoiseLab.PolyGen.Core.Builders
             ThrowIfTableContainsSingleComputedColumn();
             ThrowIfTableContainsMoreThanOneRowVersionColumn();
 
-            return _schemaFactory.Table(schema, name);
+            return _schemaBuilder.Table(schema, name);
         }
 
         internal Schema Build()
@@ -60,14 +60,14 @@ namespace NoiseLab.PolyGen.Core.Builders
             ThrowIfTableContainsSingleComputedColumn();
             ThrowIfTableContainsMoreThanOneRowVersionColumn();
 
-            return _schemaFactory.Build();
+            return _schemaBuilder.Build();
         }
 
         internal Table BuildTable()
         {
             if (_table == null)
             {
-                var columns = _columnFactories.Select(cf => cf.BuildColumn()).ToList();
+                var columns = _columnBuilders.Select(cf => cf.BuildColumn()).ToList();
                 var primaryKey = new PrimaryKey(columns.Where(c => c.PrimaryKey).ToList());
                 _table = new Table(_schema, _name, columns, primaryKey);
             }
@@ -79,19 +79,19 @@ namespace NoiseLab.PolyGen.Core.Builders
             return _schema.Equals(schema, StringComparison.OrdinalIgnoreCase) && _name.Equals(name, StringComparison.OrdinalIgnoreCase);
         }
 
-        internal ColumnBuilder GetColumnFactory(string columnName)
+        internal ColumnBuilder GetColumnBuilder(string columnName)
         {
-            return _columnFactories.FirstOrDefault(cf => cf.IsNamed(columnName));
+            return _columnBuilders.FirstOrDefault(cf => cf.IsNamed(columnName));
         }
 
         private bool DefinesColumn(string name)
         {
-            return _columnFactories.Any(cf => cf.IsNamed(name));
+            return _columnBuilders.Any(cf => cf.IsNamed(name));
         }
 
         private void ThrowIfTableContainsSingleComputedColumn()
         {
-            if (_columnFactories.Count == 1 && _columnFactories[0].IsComputed())
+            if (_columnBuilders.Count == 1 && _columnBuilders[0].IsComputed())
             {
                 throw new InvalidOperationException(
                     $"The table {FullName} must have at least one column that is not computed.");
@@ -100,11 +100,11 @@ namespace NoiseLab.PolyGen.Core.Builders
 
         private void ThrowIfTableContainsMoreThanOneRowVersionColumn()
         {
-            var rowVersionColumnFactories = _columnFactories.Where(cf => cf.IsRowVersion()).ToList();
-            if (rowVersionColumnFactories.Count > 1)
+            var rowVersionColumnBuilders = _columnBuilders.Where(cf => cf.IsRowVersion()).ToList();
+            if (rowVersionColumnBuilders.Count > 1)
             {
                 throw new InvalidOperationException(
-                    $"A table can only have one row version column. Table '{FullName}' defines {rowVersionColumnFactories.Count} row version columns.");
+                    $"A table can only have one row version column. Table '{FullName}' defines {rowVersionColumnBuilders.Count} row version columns.");
             }
         }
     }

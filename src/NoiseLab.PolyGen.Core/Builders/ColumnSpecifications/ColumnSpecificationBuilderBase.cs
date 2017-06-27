@@ -9,22 +9,22 @@ namespace NoiseLab.PolyGen.Core.Builders.ColumnSpecifications
     {
         public ColumnBuilder Column(string name)
         {
-            return _columnFactory.Column(name);
+            return _columnBuilder.Column(name);
         }
 
         public TableBuilder Table(string schema, string name)
         {
-            return _columnFactory.Table(schema, name);
+            return _columnBuilder.Table(schema, name);
         }
 
         public RelationshipBuilder Relationship(string name)
         {
-            return _columnFactory.Relationship(name);
+            return _columnBuilder.Relationship(name);
         }
 
         public Schema Build()
         {
-            return _columnFactory.Build();
+            return _columnBuilder.Build();
         }
 
         protected internal abstract AbstractDataType DataType { get; }
@@ -33,7 +33,7 @@ namespace NoiseLab.PolyGen.Core.Builders.ColumnSpecifications
         protected internal bool PrimaryKeyInternal { get; private set; }
         protected internal bool IdentityInternal { get; private set; }
         protected internal bool ComputedInternal { get; private set; }
-        private readonly ColumnBuilder _columnFactory;
+        private readonly ColumnBuilder _columnBuilder;
 
         protected void MaxLength(int maxLength)
         {
@@ -47,12 +47,12 @@ namespace NoiseLab.PolyGen.Core.Builders.ColumnSpecifications
             if (PrimaryKeyInternal)
             {
                 throw new InvalidOperationException(
-                    $"Column \"{_columnFactory.Name}\" cannot be nullable because it is a part of the primary key.");
+                    $"Column \"{_columnBuilder.Name}\" cannot be nullable because it is a part of the primary key.");
             }
             if (IdentityInternal)
             {
                 throw new InvalidOperationException(
-                    $"Column \"{_columnFactory.Name}\" cannot be nullable because it is an identity column.");
+                    $"Column \"{_columnBuilder.Name}\" cannot be nullable because it is an identity column.");
             }
 
             NullableInternal = true;
@@ -63,7 +63,7 @@ namespace NoiseLab.PolyGen.Core.Builders.ColumnSpecifications
             if (NullableInternal)
             {
                 throw new InvalidOperationException(
-                    $"Nullable column \"{_columnFactory.Name}\" cannot be set as a part of the primary key.");
+                    $"Nullable column \"{_columnBuilder.Name}\" cannot be set as a part of the primary key.");
             }
 
             PrimaryKeyInternal = true;
@@ -73,11 +73,11 @@ namespace NoiseLab.PolyGen.Core.Builders.ColumnSpecifications
         {
             if (NullableInternal)
             {
-                throw new InvalidOperationException($"Nullable column \"{_columnFactory.Name}\" cannot be set as an identity column.");
+                throw new InvalidOperationException($"Nullable column \"{_columnBuilder.Name}\" cannot be set as an identity column.");
             }
             if (ComputedInternal)
             {
-                throw new InvalidOperationException($"Computed column \"{_columnFactory.Name}\" cannot be set as an identity column.");
+                throw new InvalidOperationException($"Computed column \"{_columnBuilder.Name}\" cannot be set as an identity column.");
             }
 
             IdentityInternal = true;
@@ -87,22 +87,22 @@ namespace NoiseLab.PolyGen.Core.Builders.ColumnSpecifications
         {
             if (IdentityInternal)
             {
-                throw new InvalidOperationException($"Identity column \"{_columnFactory.Name}\" cannot be set as a computed column.");
+                throw new InvalidOperationException($"Identity column \"{_columnBuilder.Name}\" cannot be set as a computed column.");
             }
 
             ComputedInternal = true;
         }
 
-        internal ColumnSpecificationBuilderBase(ColumnBuilder columnFactory)
+        internal ColumnSpecificationBuilderBase(ColumnBuilder columnBuilder)
         {
-            _columnFactory = columnFactory;
+            _columnBuilder = columnBuilder;
         }
 
         internal void CheckReference(ColumnSpecificationBuilderBase columnSpecification)
         {
             if (DataType != columnSpecification.DataType)
             {
-                throw new InvalidOperationException($"Primary key column \"{_columnFactory.Name}\" cannot reference foreign key column \"{columnSpecification._columnFactory.Name}\". Data type mismatch: {DataType} and {columnSpecification.DataType}.");
+                throw new InvalidOperationException($"Primary key column \"{_columnBuilder.Name}\" cannot reference foreign key column \"{columnSpecification._columnBuilder.Name}\". Data type mismatch: {DataType} and {columnSpecification.DataType}.");
             }
             // TODO: Add other validations here.
         }
