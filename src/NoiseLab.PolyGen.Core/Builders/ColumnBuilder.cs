@@ -221,6 +221,7 @@ namespace NoiseLab.PolyGen.Core.Builders
 
         internal void CheckReference(ColumnBuilder foreignKeyColumn)
         {
+            // TODO: Validation - referenced column should be primary key or have unique constraint
             _columnSpecificationBuilder.CheckReference(foreignKeyColumn._columnSpecificationBuilder);
         }
 
