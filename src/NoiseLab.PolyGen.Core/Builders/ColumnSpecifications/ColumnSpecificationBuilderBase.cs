@@ -33,7 +33,6 @@ namespace NoiseLab.PolyGen.Core.Builders.ColumnSpecifications
         protected internal bool PrimaryKeyInternal { get; private set; }
         protected internal bool IdentityInternal { get; private set; }
         protected internal bool ComputedInternal { get; private set; }
-        private readonly ColumnBuilder _columnBuilder;
 
         protected void MaxLength(int maxLength)
         {
@@ -106,5 +105,7 @@ namespace NoiseLab.PolyGen.Core.Builders.ColumnSpecifications
             }
             // TODO: Add other validations here.
         }
+
+        private readonly ColumnBuilder _columnBuilder;
     }
 }
