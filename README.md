@@ -101,7 +101,7 @@ var databaseSchema = SchemaBuilder.Create()
 2. Generate code for the database schema:
 
 ```csharp
-var code = databaseSchema.GenerateCode();
+string code = databaseSchema.GenerateCode();
 ```
 
 3. PolyGen will generate the following classes for you:
