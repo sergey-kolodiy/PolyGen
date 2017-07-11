@@ -1,6 +1,4 @@
 ﻿using System;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Formatting;
 using NoiseLab.PolyGen.Core.Builders;
 using NoiseLab.PolyGen.Core.Database;
 
@@ -14,12 +12,7 @@ namespace NoiseLab.PolyGen.Core.Example
             {
                 var schema = BuildDatabaseSchema();
                 var code = schema.GenerateCode();
-
-                using (var workspace = new AdhocWorkspace())
-                {
-                    var formattedCode = Formatter.Format(code, workspace).ToString();
-                    Console.WriteLine(formattedCode);
-                }
+                Console.WriteLine(code);
             }
             catch (Exception ex)
             {

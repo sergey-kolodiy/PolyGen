@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
 
 namespace NoiseLab.PolyGen.Core.Database
 {
     public sealed class Schema
     {
-        public CompilationUnitSyntax GenerateCode()
+        public string GenerateCode()
         {
             var classes = new List<MemberDeclarationSyntax>();
             classes.AddRange(Tables.Select(t => t.GenerateOrmModel()));
@@ -37,7 +39,13 @@ namespace NoiseLab.PolyGen.Core.Database
                 )
                 .AddMembers(classes.ToArray());
 
-            return SyntaxFactory.CompilationUnit().AddMembers(@namespace);
+            var compilationUnit = SyntaxFactory.CompilationUnit().AddMembers(@namespace);
+
+            using (var workspace = new AdhocWorkspace())
+            {
+                var formattedCode = Formatter.Format(compilationUnit, workspace).ToString();
+                return formattedCode;
+            }
         }
 
         internal Schema(IReadOnlyList<Table> tables, IEnumerable<Relationship> relationships)
