@@ -1,6 +1,6 @@
 # PolyGen
 
-PolyGen is a code generator that produces ORM layer, REST API and a user interface for your database.
+PolyGen is a code generator that produces ORM layer, REST API and a (coming soon — stay tuned!) single-page web UI for your relational database.
 
 [![Build Status](https://travis-ci.org/dr-noise/PolyGen.svg?branch=master)](https://travis-ci.org/dr-noise/PolyGen)
 [![Join the chat at https://gitter.im/PolyGen/Lobby](https://badges.gitter.im/PolyGen/Lobby.svg)](https://gitter.im/PolyGen/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
