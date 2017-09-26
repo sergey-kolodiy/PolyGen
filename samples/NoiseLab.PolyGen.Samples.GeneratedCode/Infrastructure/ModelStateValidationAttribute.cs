@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace NoiseLab.PolyGen.Generated
+namespace NoiseLab.PolyGen.Samples.GeneratedCode.Infrastructure
 {
     public class ModelStateValidationAttribute : ActionFilterAttribute
     {

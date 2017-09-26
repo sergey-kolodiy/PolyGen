@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.14
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D4DA2021-A5A0-483F-BA87-C951785260A2}"
 EndProject
@@ -11,13 +11,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoiseLab.Common", "src\Nois
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoiseLab.PolyGen.Core", "src\NoiseLab.PolyGen.Core\NoiseLab.PolyGen.Core.csproj", "{28FD9A45-C8DE-42A4-B533-36663E4731B8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoiseLab.PolyGen.Core.Example", "test\NoiseLab.PolyGen.Core.Example\NoiseLab.PolyGen.Core.Example.csproj", "{8D8EE7FD-7FCD-4BB8-AE7F-1DA5DA74866A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoiseLab.Common.UnitTests", "test\NoiseLab.Common.UnitTests\NoiseLab.Common.UnitTests.csproj", "{C230CB2E-C18E-470A-83C4-A9CF0279F24F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoiseLab.PolyGen.Core.UnitTests", "test\NoiseLab.PolyGen.Core.UnitTests\NoiseLab.PolyGen.Core.UnitTests.csproj", "{49F7B262-0BEF-40D6-825C-F7C4B90012A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoiseLab.PolyGen.Core.GeneratedCodeExample", "test\NoiseLab.PolyGen.Core.GeneratedCodeExample\NoiseLab.PolyGen.Core.GeneratedCodeExample.csproj", "{1CF66A5C-BF25-44B0-A4AA-F08A32C1BCB4}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{9E1C8157-A89B-49F5-8104-2DFC9DD67AAA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoiseLab.PolyGen.Samples.CodeGeneration", "samples\NoiseLab.PolyGen.Samples.CodeGeneration\NoiseLab.PolyGen.Samples.CodeGeneration.csproj", "{E09CC70D-42E8-420E-A24C-86B0354E1EF4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoiseLab.PolyGen.Samples.GeneratedCode", "samples\NoiseLab.PolyGen.Samples.GeneratedCode\NoiseLab.PolyGen.Samples.GeneratedCode.csproj", "{78849AE2-73C3-47DA-9BFA-BCB1040E34E1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,10 +35,6 @@ Global
 		{28FD9A45-C8DE-42A4-B533-36663E4731B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28FD9A45-C8DE-42A4-B533-36663E4731B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28FD9A45-C8DE-42A4-B533-36663E4731B8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8D8EE7FD-7FCD-4BB8-AE7F-1DA5DA74866A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8D8EE7FD-7FCD-4BB8-AE7F-1DA5DA74866A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8D8EE7FD-7FCD-4BB8-AE7F-1DA5DA74866A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8D8EE7FD-7FCD-4BB8-AE7F-1DA5DA74866A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C230CB2E-C18E-470A-83C4-A9CF0279F24F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C230CB2E-C18E-470A-83C4-A9CF0279F24F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C230CB2E-C18E-470A-83C4-A9CF0279F24F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,10 +43,14 @@ Global
 		{49F7B262-0BEF-40D6-825C-F7C4B90012A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49F7B262-0BEF-40D6-825C-F7C4B90012A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49F7B262-0BEF-40D6-825C-F7C4B90012A9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1CF66A5C-BF25-44B0-A4AA-F08A32C1BCB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1CF66A5C-BF25-44B0-A4AA-F08A32C1BCB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1CF66A5C-BF25-44B0-A4AA-F08A32C1BCB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1CF66A5C-BF25-44B0-A4AA-F08A32C1BCB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E09CC70D-42E8-420E-A24C-86B0354E1EF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E09CC70D-42E8-420E-A24C-86B0354E1EF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E09CC70D-42E8-420E-A24C-86B0354E1EF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E09CC70D-42E8-420E-A24C-86B0354E1EF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78849AE2-73C3-47DA-9BFA-BCB1040E34E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78849AE2-73C3-47DA-9BFA-BCB1040E34E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78849AE2-73C3-47DA-9BFA-BCB1040E34E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78849AE2-73C3-47DA-9BFA-BCB1040E34E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,9 +58,12 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{E4BC537C-6C1D-453D-853A-18FA19BC2A13} = {D4DA2021-A5A0-483F-BA87-C951785260A2}
 		{28FD9A45-C8DE-42A4-B533-36663E4731B8} = {D4DA2021-A5A0-483F-BA87-C951785260A2}
-		{8D8EE7FD-7FCD-4BB8-AE7F-1DA5DA74866A} = {1ABE6D42-CB31-4029-963D-1F7F81E2C0B6}
 		{C230CB2E-C18E-470A-83C4-A9CF0279F24F} = {1ABE6D42-CB31-4029-963D-1F7F81E2C0B6}
 		{49F7B262-0BEF-40D6-825C-F7C4B90012A9} = {1ABE6D42-CB31-4029-963D-1F7F81E2C0B6}
-		{1CF66A5C-BF25-44B0-A4AA-F08A32C1BCB4} = {1ABE6D42-CB31-4029-963D-1F7F81E2C0B6}
+		{E09CC70D-42E8-420E-A24C-86B0354E1EF4} = {9E1C8157-A89B-49F5-8104-2DFC9DD67AAA}
+		{78849AE2-73C3-47DA-9BFA-BCB1040E34E1} = {9E1C8157-A89B-49F5-8104-2DFC9DD67AAA}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {711B2661-416E-4987-9DB7-7808E2A6B9B1}
 	EndGlobalSection
 EndGlobal
