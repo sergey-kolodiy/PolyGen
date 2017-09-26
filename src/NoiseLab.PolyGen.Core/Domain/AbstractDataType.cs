@@ -37,7 +37,6 @@
             return nullable ? _nullableClrType : _clrType;
         }
 
-
         private AbstractDataType(string name, ClrDataType clrType, ClrDataType nullableClrType)
         {
             _name = name;

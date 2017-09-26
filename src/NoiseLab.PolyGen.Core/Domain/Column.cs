@@ -32,11 +32,11 @@ namespace NoiseLab.PolyGen.Core.Domain
         internal PropertyDeclarationSyntax GeneratePropertyForOrmModel()
         {
             /*
-             * [Column("Property", Order=0)]                     - required
-             * [DatabaseGenerated(DatabaseGeneratedOption.None)] - required
-             * [StringLength(9)]                                 - optional
-             * [Required]                                        - optional
-             * [RowVersion]                                      - optional
+             * [Column("Property", Order=0)]                     - always generated
+             * [DatabaseGenerated(DatabaseGeneratedOption.None)] - always generated
+             * [StringLength(9)]                                 - conditionally generated
+             * [Required]                                        - conditionally generated
+             * [RowVersion]                                      - conditionally generated
              * public System.String @Property { get; set; }
              */
             var type = GeneratePropertyTypeSyntax();
@@ -63,6 +63,7 @@ namespace NoiseLab.PolyGen.Core.Domain
 
                 if (MaxLength.HasValue)
                 {
+                    // TODO: For some data types, MaxLength should be used, not StringLength.
                     attributeLists.Add(GenerateStringLengthAttribute(MaxLength.Value));
                 }
                 if (!Nullable)
@@ -126,8 +127,8 @@ namespace NoiseLab.PolyGen.Core.Domain
         internal PropertyDeclarationSyntax GeneratePropertyForPostValidationModel()
         {
             /*
-             * [Required]     - optional
-             * [MaxLength(9)] - optional
+             * [Required]     - conditionally generated
+             * [MaxLength(9)] - conditionally generated
              * public System.Nullable<System.Int32> @Required { get; set; }
              */
             return GeneratePropertyForValidationModel(IsValueRequiredOnCreate());
@@ -136,8 +137,8 @@ namespace NoiseLab.PolyGen.Core.Domain
         internal PropertyDeclarationSyntax GeneratePropertyForPutValidationModel()
         {
             /*
-             * [Required]     - optional
-             * [MaxLength(9)] - optional
+             * [Required]     - conditionally generated
+             * [MaxLength(9)] - conditionally generated
              * public System.Nullable<System.Int32> @Required { get; set; }
              */
             return GeneratePropertyForValidationModel(IsValueRequiredOnUpdate());
