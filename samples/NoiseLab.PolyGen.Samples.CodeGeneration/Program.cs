@@ -1,6 +1,6 @@
 ﻿using System;
-using NoiseLab.PolyGen.Core.Builders;
-using NoiseLab.PolyGen.Core.Database;
+using NoiseLab.PolyGen.Core.Domain;
+using NoiseLab.PolyGen.Core.FluentConfiguration;
 
 namespace NoiseLab.PolyGen.Samples.CodeGeneration
 {
@@ -10,8 +10,8 @@ namespace NoiseLab.PolyGen.Samples.CodeGeneration
         {
             try
             {
-                var schema = BuildDatabaseSchema();
-                var code = schema.GenerateCode();
+                var database = BuildDatabase();
+                var code = database.GenerateCode();
                 Console.WriteLine(code);
             }
             catch (Exception ex)
@@ -21,9 +21,9 @@ namespace NoiseLab.PolyGen.Samples.CodeGeneration
             Console.ReadLine();
         }
 
-        private static Schema BuildDatabaseSchema()
+        private static Database BuildDatabase()
         {
-            var schema = SchemaBuilder
+            var database = DatabaseBuilder
                   .Create()
                       .Table("user", "Person")
                           .Column("SSN").String().MaxLength(9).PrimaryKey()
@@ -107,7 +107,7 @@ namespace NoiseLab.PolyGen.Samples.CodeGeneration
                   // TODO: Implement configuring indexes.		
                   .Build();
 
-            return schema;
+            return database;
         }
     }
 }
