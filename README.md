@@ -7,7 +7,7 @@ PolyGen is a code generator that produces ORM layer, REST API and a (coming soon
 
 ## Getting Started
 
-1. Define your database structure using Fluent API:
+1. Define your database structure using Fluent Configuration API:
 
 ```csharp
 var databaseSchema = SchemaBuilder.Create()
