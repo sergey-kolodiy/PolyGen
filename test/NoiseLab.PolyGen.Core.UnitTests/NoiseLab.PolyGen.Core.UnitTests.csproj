@@ -10,4 +10,13 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Domain\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\NoiseLab.Common\NoiseLab.Common.csproj" />
+    <ProjectReference Include="..\..\src\NoiseLab.PolyGen.Core\NoiseLab.PolyGen.Core.csproj" />
+  </ItemGroup>
+
 </Project>
