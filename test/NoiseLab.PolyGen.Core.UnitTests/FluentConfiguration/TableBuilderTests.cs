@@ -10,34 +10,35 @@ namespace NoiseLab.PolyGen.Core.UnitTests.FluentConfiguration
         public void Column_NameIsNull_ThrowsArgumentException()
         {
             // Arrange
+            var builder = DatabaseBuilder.Create()
+                .Table("Test", "Test");
+
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => DatabaseBuilder
-                .Create()
-                .Table("Test", "Test")
-                    .Column(null));
+            Assert.Throws<ArgumentException>(() => builder.Column(null));
         }
 
         [Fact]
         public void Column_NameDoesNotMatchDefaultPattern_ThrowsArgumentException()
         {
             // Arrange
+            var builder = DatabaseBuilder.Create()
+                .Table("Test", "Test");
+
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => DatabaseBuilder
-                .Create()
-                .Table("Test", "Test")
-                    .Column("1Test"));
+            Assert.Throws<ArgumentException>(() => builder.Column("1Test"));
         }
 
         [Fact]
         public void Column_ColumnAlreadyExists_ThrowsInvalidOperationException()
         {
             // Arrange
+            var builder = DatabaseBuilder.Create()
+                .Table("Test", "Test");
+
             // Act & Assert
-            Assert.Throws<InvalidOperationException>(() => DatabaseBuilder
-                .Create()
-                .Table("Test", "Test")
-                    .Column("Test").String()
-                    .Column("Test"));
+            Assert.Throws<InvalidOperationException>(() => builder
+                .Column("Test").String()
+                .Column("Test"));
         }
     }
 }

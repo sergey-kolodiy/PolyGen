@@ -10,62 +10,64 @@ namespace NoiseLab.PolyGen.Core.UnitTests.FluentConfiguration
         public void Table_SchemaIsNull_ThrowsArgumentException()
         {
             // Arrange
+            var builder = DatabaseBuilder.Create();
+
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => DatabaseBuilder
-                .Create()
-                .Table(null, "Test"));
+            Assert.Throws<ArgumentException>(() => builder.Table(null, "Test"));
         }
 
         [Fact]
         public void Table_NameIsNull_ThrowsArgumentException()
         {
             // Arrange
+            var builder = DatabaseBuilder.Create();
+
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => DatabaseBuilder
-                .Create()
-                .Table("Test", null));
+            Assert.Throws<ArgumentException>(() => builder.Table("Test", null));
         }
 
         [Fact]
         public void Table_SchemaDoesNotMatchDefaultPattern_ThrowsArgumentException()
         {
             // Arrange
+            var builder = DatabaseBuilder.Create();
+
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => DatabaseBuilder
-                .Create()
-                .Table("1Test", "Test"));
+            Assert.Throws<ArgumentException>(() => builder.Table("1Test", "Test"));
         }
 
         [Fact]
         public void Table_NameDoesNotMatchDefaultPattern_ThrowsArgumentException()
         {
             // Arrange
+            var builder = DatabaseBuilder.Create();
+
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => DatabaseBuilder
-                .Create()
-                .Table("Test", "1Test"));
+            Assert.Throws<ArgumentException>(() => builder.Table("Test", "1Test"));
         }
 
         [Fact]
         public void Table_ValidArguments_DoesNotThrow()
         {
             // Arrange
+            var builder = DatabaseBuilder.Create();
+
             // Act & Assert
-            DatabaseBuilder
-                .Create()
-                .Table("Test", "Test");
+            builder.Table("Test", "Test");
         }
 
         [Fact]
         public void Table_TableAlreadyExists_ThrowsInvalidOperationException()
         {
             // Arrange
+            var builder = DatabaseBuilder.Create();
+
             // Act & Assert
-            Assert.Throws<InvalidOperationException>(() => DatabaseBuilder
-                .Create()
-                .Table("Test", "Test")
-                    .Column("Test").String()
-                .Table("Test", "Test"));
+            Assert.Throws<InvalidOperationException>(() =>
+                builder
+                    .Table("Test", "Test")
+                        .Column("Test").String()
+                    .Table("Test", "Test"));
         }
     }
 }
