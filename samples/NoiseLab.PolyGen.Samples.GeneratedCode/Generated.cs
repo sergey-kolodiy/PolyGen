@@ -1,19 +1,19 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using NoiseLab.PolyGen.Samples.GeneratedCode.Infrastructure;
-
-namespace NoiseLab.PolyGen.Samples.GeneratedCode
+﻿namespace NoiseLab.PolyGen.Generated
 {
+    using System.IO;
+    using System.Linq;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Filters;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+
     [Table("Person", Schema = "user")]
     public class user_Person_OrmModel
     {
@@ -733,51 +733,33 @@ namespace NoiseLab.PolyGen.Samples.GeneratedCode
         {
             {
                 modelBuilder.Entity<user_Person_OrmModel>().HasKey(o => new {o.@SSN, o.@FirstName, o.@LastName});
-                modelBuilder.Entity<user_Person_OrmModel>()
-                    .HasMany(o => o.@blogging_Blog_FK_Author_Blogs)
+                modelBuilder.Entity<user_Person_OrmModel>().HasMany(o => o.@blogging_Blog_FK_Author_Blogs)
                     .WithOne(o => o.@user_Person_FK_Author_Blogs)
-                    .HasForeignKey("AuthorSSN", "AuthorFirstName", "AuthorLastName")
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasForeignKey("AuthorSSN", "AuthorFirstName", "AuthorLastName").OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Author_Blogs");
-                modelBuilder.Entity<user_Person_OrmModel>()
-                    .HasMany(o => o.@blogging_Comment_FK_Comment_Author)
+                modelBuilder.Entity<user_Person_OrmModel>().HasMany(o => o.@blogging_Comment_FK_Comment_Author)
                     .WithOne(o => o.@user_Person_FK_Comment_Author)
-                    .HasForeignKey("AuthorSSN", "AuthorFirstName", "AuthorLastName")
-                    .OnDelete(DeleteBehavior.Restrict)
+                    .HasForeignKey("AuthorSSN", "AuthorFirstName", "AuthorLastName").OnDelete(DeleteBehavior.Restrict)
                     .HasConstraintName("FK_Comment_Author");
-                modelBuilder.Entity<user_Person_OrmModel>()
-                    .HasMany(o => o.@blogging_Post_FK_Post_Editor)
+                modelBuilder.Entity<user_Person_OrmModel>().HasMany(o => o.@blogging_Post_FK_Post_Editor)
                     .WithOne(o => o.@user_Person_FK_Post_Editor)
-                    .HasForeignKey("EditorSSN", "EditorFirstName", "EditorLastName")
-                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasForeignKey("EditorSSN", "EditorFirstName", "EditorLastName").OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_Post_Editor");
                 modelBuilder.Entity<blogging_Blog_OrmModel>().HasKey(o => new {o.@Id});
-                modelBuilder.Entity<blogging_Blog_OrmModel>()
-                    .HasMany(o => o.@blogging_Post_FK_Blog_Posts)
-                    .WithOne(o => o.@blogging_Blog_FK_Blog_Posts)
-                    .HasForeignKey("BlogId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .HasConstraintName("FK_Blog_Posts");
+                modelBuilder.Entity<blogging_Blog_OrmModel>().HasMany(o => o.@blogging_Post_FK_Blog_Posts)
+                    .WithOne(o => o.@blogging_Blog_FK_Blog_Posts).HasForeignKey("BlogId")
+                    .OnDelete(DeleteBehavior.Restrict).HasConstraintName("FK_Blog_Posts");
                 modelBuilder.Entity<blogging_Post_OrmModel>().HasKey(o => new {o.@Id});
-                modelBuilder.Entity<blogging_Post_OrmModel>()
-                    .HasMany(o => o.@blogging_Comment_FK_Post_Comments)
-                    .WithOne(o => o.@blogging_Post_FK_Post_Comments)
-                    .HasForeignKey("PostId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .HasConstraintName("FK_Post_Comments");
-                modelBuilder.Entity<blogging_Post_OrmModel>()
-                    .HasMany(o => o.@blogging_PostTag_FK_Post_PostTags)
-                    .WithOne(o => o.@blogging_Post_FK_Post_PostTags)
-                    .HasForeignKey("PostId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .HasConstraintName("FK_Post_PostTags");
+                modelBuilder.Entity<blogging_Post_OrmModel>().HasMany(o => o.@blogging_Comment_FK_Post_Comments)
+                    .WithOne(o => o.@blogging_Post_FK_Post_Comments).HasForeignKey("PostId")
+                    .OnDelete(DeleteBehavior.Restrict).HasConstraintName("FK_Post_Comments");
+                modelBuilder.Entity<blogging_Post_OrmModel>().HasMany(o => o.@blogging_PostTag_FK_Post_PostTags)
+                    .WithOne(o => o.@blogging_Post_FK_Post_PostTags).HasForeignKey("PostId")
+                    .OnDelete(DeleteBehavior.Restrict).HasConstraintName("FK_Post_PostTags");
                 modelBuilder.Entity<blogging_Tag_OrmModel>().HasKey(o => new {o.@Id});
-                modelBuilder.Entity<blogging_Tag_OrmModel>()
-                    .HasMany(o => o.@blogging_PostTag_FK_Tag_PostTags)
-                    .WithOne(o => o.@blogging_Tag_FK_Tag_PostTags)
-                    .HasForeignKey("TagId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .HasConstraintName("FK_Tag_PostTags");
+                modelBuilder.Entity<blogging_Tag_OrmModel>().HasMany(o => o.@blogging_PostTag_FK_Tag_PostTags)
+                    .WithOne(o => o.@blogging_Tag_FK_Tag_PostTags).HasForeignKey("TagId")
+                    .OnDelete(DeleteBehavior.Restrict).HasConstraintName("FK_Tag_PostTags");
                 modelBuilder.Entity<blogging_PostTag_OrmModel>().HasKey(o => new {o.@Id});
                 modelBuilder.Entity<blogging_Comment_OrmModel>().HasKey(o => new {o.@Id});
             }
@@ -788,11 +770,9 @@ namespace NoiseLab.PolyGen.Samples.GeneratedCode
     {
         public Startup(IHostingEnvironment env)
         {
-            var builder =
-                new ConfigurationBuilder().SetBasePath(env.ContentRootPath)
-                    .AddJsonFile("appsettings.json", false, true)
-                    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true)
-                    .AddEnvironmentVariables();
+            var builder = new ConfigurationBuilder().SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", false, true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true).AddEnvironmentVariables();
             _configuration = builder.Build();
         }
 
@@ -820,12 +800,8 @@ namespace NoiseLab.PolyGen.Samples.GeneratedCode
     {
         public static void Main()
         {
-            var host =
-                new WebHostBuilder().UseKestrel()
-                    .UseContentRoot(Directory.GetCurrentDirectory())
-                    .UseIISIntegration()
-                    .UseStartup<Startup>()
-                    .Build();
+            var host = new WebHostBuilder().UseKestrel().UseContentRoot(Directory.GetCurrentDirectory())
+                .UseIISIntegration().UseStartup<Startup>().Build();
             host.Run();
         }
     }
@@ -1446,6 +1422,34 @@ namespace NoiseLab.PolyGen.Samples.GeneratedCode
             _context.Remove(entity);
             await _context.SaveChangesAsync();
             return Ok();
+        }
+    }
+
+    public class ModelStateValidationAttribute : ActionFilterAttribute
+    {
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            if (!context.ModelState.IsValid)
+            {
+                context.Result = new BadRequestObjectResult(context.ModelState);
+            }
+            base.OnActionExecuting(context);
+        }
+    }
+
+    public class NullValidationAttribute : ActionFilterAttribute
+    {
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            var nullArguments = context.ActionArguments.Where(a => a.Value == null).ToList();
+            if (nullArguments.Any())
+            {
+                context.Result = new BadRequestObjectResult(new
+                {
+                    arguments = nullArguments.Select(a => $"The {a.Key} argument is required.")
+                });
+            }
+            base.OnActionExecuting(context);
         }
     }
 }
