@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using NoiseLab.PolyGen.Core.Domain;
 using NoiseLab.PolyGen.Core.FluentConfiguration;
 
@@ -11,6 +12,16 @@ namespace NoiseLab.PolyGen.Samples.CodeGeneration
             try
             {
                 var database = BuildDatabase();
+                var codeGenerationResult = database.GenerateExecutable();
+                if (codeGenerationResult.emitResult.Success)
+                {
+                    using (var file = new FileStream(
+                        @"c:\Users\Sergey\Desktop\NoiseLab.PolyGen.Generated.dll",
+                        FileMode.Create, FileAccess.Write))
+                    {
+                        file.Write(codeGenerationResult.bytes, 0, codeGenerationResult.bytes.Length);
+                    }
+                }
                 var code = database.GenerateCode();
                 Console.WriteLine(code);
             }
