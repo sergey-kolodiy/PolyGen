@@ -10,7 +10,7 @@ PolyGen is a code generator that produces ORM layer, REST API and a (coming soon
 1. Define your database structure using Fluent Configuration API:
 
 ```csharp
-var databaseSchema = SchemaBuilder.Create()
+var database = DatabaseBuilder.Create()
     .Table("user", "User")
         .Column("SSN").String().MaxLength(9).PrimaryKey()
         .Column("FirstName").String().MaxLength(100).PrimaryKey()
@@ -101,7 +101,7 @@ var databaseSchema = SchemaBuilder.Create()
 2. Generate code for the database schema:
 
 ```csharp
-string code = databaseSchema.GenerateCode();
+string code = database.GenerateCode();
 ```
 
 3. PolyGen will generate the following classes for you:
