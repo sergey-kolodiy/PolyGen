@@ -11,6 +11,17 @@ namespace NoiseLab.PolyGen.Core.Domain
     {
         public string GenerateCode()
         {
+            var compilationUnit = GenerateCompilationUnitSyntax();
+
+            using (var workspace = new AdhocWorkspace())
+            {
+                var formattedCode = Formatter.Format(compilationUnit, workspace).ToString();
+                return formattedCode;
+            }
+        }
+
+        internal CompilationUnitSyntax GenerateCompilationUnitSyntax()
+        {
             var classes = new List<MemberDeclarationSyntax>();
             classes.AddRange(Tables.Select(t => t.GenerateOrmModel()));
             classes.AddRange(Tables.Select(t => t.GeneratePostValidationModel()));
@@ -39,13 +50,7 @@ namespace NoiseLab.PolyGen.Core.Domain
                 )
                 .AddMembers(classes.ToArray());
 
-            var compilationUnit = SyntaxFactory.CompilationUnit().AddMembers(@namespace);
-
-            using (var workspace = new AdhocWorkspace())
-            {
-                var formattedCode = Formatter.Format(compilationUnit, workspace).ToString();
-                return formattedCode;
-            }
+            return SyntaxFactory.CompilationUnit().AddMembers(@namespace);
         }
 
         internal Database(IReadOnlyList<Table> tables, IEnumerable<Relationship> relationships)
