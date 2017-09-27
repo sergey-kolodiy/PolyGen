@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -25,34 +26,32 @@ namespace NoiseLab.PolyGen.Core.Domain
         public CodeGenerationArtifact GenerateCode()
         {
             var compilationUnit = GenerateCompilationUnitSyntax();
-            
             var syntaxTree = CSharpSyntaxTree.Create(compilationUnit);
-            // TODO: Get rid of hard-coded path. Use assembly resources instead.
-            var basePath = @"c:\Work\NoiseLab\PolyGen\src\NoiseLab.PolyGen.Core\MetadataReferences\";
+
             MetadataReference[] references =
             {
-                MetadataReference.CreateFromFile($@"{basePath}netstandard.library.2.0.0\build\netstandard2.0\ref\netstandard.dll"),
-                MetadataReference.CreateFromFile($@"{basePath}netstandard.library.2.0.0\build\netstandard2.0\ref\System.Runtime.dll"),
-                MetadataReference.CreateFromFile($@"{basePath}system.componentmodel.annotations.4.4.0\ref\netcore50\System.ComponentModel.Annotations.dll"),
-                MetadataReference.CreateFromFile($@"{basePath}microsoft.entityframeworkcore.2.0.0\lib\netstandard2.0\Microsoft.EntityFrameworkCore.dll"),
-                MetadataReference.CreateFromFile($@"{basePath}microsoft.entityframeworkcore.relational.2.0.0\lib\netstandard2.0\Microsoft.EntityFrameworkCore.Relational.dll"),
-                MetadataReference.CreateFromFile($@"{basePath}microsoft.entityframeworkcore.sqlserver.2.0.0\lib\netstandard2.0\Microsoft.EntityFrameworkCore.SqlServer.dll"),
-                MetadataReference.CreateFromFile($@"{basePath}microsoft.aspnetcore.hosting.2.0.0\lib\netstandard2.0\Microsoft.AspNetCore.Hosting.dll"),
-                MetadataReference.CreateFromFile($@"{basePath}microsoft.aspnetcore.hosting.abstractions.2.0.0\lib\netstandard2.0\Microsoft.AspNetCore.Hosting.Abstractions.dll"),
-                MetadataReference.CreateFromFile($@"{basePath}microsoft.aspnetcore.http.abstractions.2.0.0\lib\netstandard2.0\Microsoft.AspNetCore.Http.Abstractions.dll"),
-                MetadataReference.CreateFromFile($@"{basePath}microsoft.aspnetcore.mvc.2.0.0\lib\netstandard2.0\Microsoft.AspNetCore.Mvc.dll"),
-                MetadataReference.CreateFromFile($@"{basePath}microsoft.aspnetcore.mvc.abstractions.2.0.0\lib\netstandard2.0\Microsoft.AspNetCore.Mvc.Abstractions.dll"),
-                MetadataReference.CreateFromFile($@"{basePath}microsoft.aspnetcore.mvc.core.2.0.0\lib\netstandard2.0\Microsoft.AspNetCore.Mvc.Core.dll"),
-                MetadataReference.CreateFromFile($@"{basePath}microsoft.aspnetcore.mvc.viewfeatures.2.0.0\lib\netstandard2.0\Microsoft.AspNetCore.Mvc.ViewFeatures.dll"),
-                MetadataReference.CreateFromFile($@"{basePath}microsoft.aspnetcore.server.iisintegration.2.0.0\lib\netstandard2.0\Microsoft.AspNetCore.Server.IISIntegration.dll"),
-                MetadataReference.CreateFromFile($@"{basePath}microsoft.aspnetcore.server.kestrel.2.0.0\lib\netstandard2.0\Microsoft.AspNetCore.Server.Kestrel.dll"),
-                MetadataReference.CreateFromFile($@"{basePath}microsoft.extensions.configuration.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll"),
-                MetadataReference.CreateFromFile($@"{basePath}microsoft.extensions.configuration.binder.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Binder.dll"),
-                MetadataReference.CreateFromFile($@"{basePath}microsoft.extensions.configuration.abstractions.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll"),
-                MetadataReference.CreateFromFile($@"{basePath}microsoft.extensions.configuration.environmentvariables.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.EnvironmentVariables.dll"),
-                MetadataReference.CreateFromFile($@"{basePath}microsoft.extensions.configuration.fileextensions.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.FileExtensions.dll"),
-                MetadataReference.CreateFromFile($@"{basePath}microsoft.extensions.configuration.json.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Json.dll"),
-                MetadataReference.CreateFromFile($@"{basePath}microsoft.extensions.dependencyinjection.abstractions.2.0.0\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll"),
+                MetadataReference.CreateFromFile(CreateMetadataReference("netstandard.library.2.0.0", @"build\netstandard2.0\ref\netstandard.dll")),
+                MetadataReference.CreateFromFile(CreateMetadataReference("netstandard.library.2.0.0", @"build\netstandard2.0\ref\System.Runtime.dll")),
+                MetadataReference.CreateFromFile(CreateMetadataReference("system.componentmodel.annotations.4.4.0", @"lib\netcore50\System.ComponentModel.Annotations.dll")),
+                MetadataReference.CreateFromFile(CreateMetadataReference("microsoft.entityframeworkcore.2.0.0", @"lib\netstandard2.0\Microsoft.EntityFrameworkCore.dll")),
+                MetadataReference.CreateFromFile(CreateMetadataReference("microsoft.entityframeworkcore.relational.2.0.0", @"lib\netstandard2.0\Microsoft.EntityFrameworkCore.Relational.dll")),
+                MetadataReference.CreateFromFile(CreateMetadataReference("microsoft.entityframeworkcore.sqlserver.2.0.0", @"lib\netstandard2.0\Microsoft.EntityFrameworkCore.SqlServer.dll")),
+                MetadataReference.CreateFromFile(CreateMetadataReference("microsoft.aspnetcore.hosting.2.0.0", @"lib\netstandard2.0\Microsoft.AspNetCore.Hosting.dll")),
+                MetadataReference.CreateFromFile(CreateMetadataReference("microsoft.aspnetcore.hosting.abstractions.2.0.0", @"lib\netstandard2.0\Microsoft.AspNetCore.Hosting.Abstractions.dll")),
+                MetadataReference.CreateFromFile(CreateMetadataReference("microsoft.aspnetcore.http.abstractions.2.0.0", @"lib\netstandard2.0\Microsoft.AspNetCore.Http.Abstractions.dll")),
+                MetadataReference.CreateFromFile(CreateMetadataReference("microsoft.aspnetcore.mvc.2.0.0", @"lib\netstandard2.0\Microsoft.AspNetCore.Mvc.dll")),
+                MetadataReference.CreateFromFile(CreateMetadataReference("microsoft.aspnetcore.mvc.abstractions.2.0.0", @"lib\netstandard2.0\Microsoft.AspNetCore.Mvc.Abstractions.dll")),
+                MetadataReference.CreateFromFile(CreateMetadataReference("microsoft.aspnetcore.mvc.core.2.0.0", @"lib\netstandard2.0\Microsoft.AspNetCore.Mvc.Core.dll")),
+                MetadataReference.CreateFromFile(CreateMetadataReference("microsoft.aspnetcore.mvc.viewfeatures.2.0.0", @"lib\netstandard2.0\Microsoft.AspNetCore.Mvc.ViewFeatures.dll")),
+                MetadataReference.CreateFromFile(CreateMetadataReference("microsoft.aspnetcore.server.iisintegration.2.0.0", @"lib\netstandard2.0\Microsoft.AspNetCore.Server.IISIntegration.dll")),
+                MetadataReference.CreateFromFile(CreateMetadataReference("microsoft.aspnetcore.server.kestrel.2.0.0", @"lib\netstandard2.0\Microsoft.AspNetCore.Server.Kestrel.dll")),
+                MetadataReference.CreateFromFile(CreateMetadataReference("microsoft.extensions.configuration.2.0.0", @"lib\netstandard2.0\Microsoft.Extensions.Configuration.dll")),
+                MetadataReference.CreateFromFile(CreateMetadataReference("microsoft.extensions.configuration.binder.2.0.0", @"lib\netstandard2.0\Microsoft.Extensions.Configuration.Binder.dll")),
+                MetadataReference.CreateFromFile(CreateMetadataReference("microsoft.extensions.configuration.abstractions.2.0.0", @"lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll")),
+                MetadataReference.CreateFromFile(CreateMetadataReference("microsoft.extensions.configuration.environmentvariables.2.0.0", @"lib\netstandard2.0\Microsoft.Extensions.Configuration.EnvironmentVariables.dll")),
+                MetadataReference.CreateFromFile(CreateMetadataReference("microsoft.extensions.configuration.fileextensions.2.0.0", @"lib\netstandard2.0\Microsoft.Extensions.Configuration.FileExtensions.dll")),
+                MetadataReference.CreateFromFile(CreateMetadataReference("microsoft.extensions.configuration.json.2.0.0", @"lib\netstandard2.0\Microsoft.Extensions.Configuration.Json.dll")),
+                MetadataReference.CreateFromFile(CreateMetadataReference("microsoft.extensions.dependencyinjection.abstractions.2.0.0", @"lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll"))
             };
 
             var compilation = CSharpCompilation.Create(
@@ -88,6 +87,23 @@ namespace NoiseLab.PolyGen.Core.Domain
                 }
             }
             return new CodeGenerationArtifact(result, peBytes, pdbBytes, xmlBytes);
+        }
+
+        private static string CreateMetadataReference(string nugetPackageName, string path)
+        {
+            // TODO: Is it possible to avoid I/O tasks for code generation?
+            var resource = (byte[])Resources.ResourceManager.GetObject(nugetPackageName.Replace('.', '_'));
+            using (var memoryStream = new MemoryStream(resource))
+            {
+                using (var archive = new ZipArchive(memoryStream))
+                {
+                    var tempPath = Path.Combine(
+                        Path.GetTempPath(),
+                        $@"NoiseLab.PolyGen\MetadataReferences\{nugetPackageName}");
+                    archive.ExtractToDirectory(tempPath, true);
+                    return Path.Combine(tempPath, path);
+                }
+            }
         }
 
         private CompilationUnitSyntax GenerateCompilationUnitSyntax()
