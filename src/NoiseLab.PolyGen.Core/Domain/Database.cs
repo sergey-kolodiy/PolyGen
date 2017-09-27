@@ -11,7 +11,7 @@ namespace NoiseLab.PolyGen.Core.Domain
 {
     public sealed class Database
     {
-        public string GenerateCode()
+        public string GenerateCodeAsString()
         {
             var compilationUnit = GenerateCompilationUnitSyntax();
 
@@ -22,7 +22,7 @@ namespace NoiseLab.PolyGen.Core.Domain
             }
         }
 
-        public (EmitResult emitResult, byte[] peBytes, byte[] pdbBytes, byte[] xmlBytes) GenerateExecutable()
+        public CodeGenerationArtifact GenerateCode()
         {
             var compilationUnit = GenerateCompilationUnitSyntax();
             
@@ -87,7 +87,7 @@ namespace NoiseLab.PolyGen.Core.Domain
                     }
                 }
             }
-            return (result, peBytes, pdbBytes, xmlBytes);
+            return new CodeGenerationArtifact(result, peBytes, pdbBytes, xmlBytes);
         }
 
         private CompilationUnitSyntax GenerateCompilationUnitSyntax()

@@ -12,35 +12,10 @@ namespace NoiseLab.PolyGen.Samples.CodeGeneration
             try
             {
                 var database = BuildDatabase();
-                var codeGenerationResult = database.GenerateExecutable();
-                var peBytes = codeGenerationResult.peBytes;
-                var pdbBytes = codeGenerationResult.pdbBytes;
-                var xmlBytes = codeGenerationResult.xmlBytes;
-                if (codeGenerationResult.emitResult.Success)
-                {
-                    var basePath = @"c:\Users\Sergey\Desktop\";
-                    using (var file = new FileStream(
-                        $@"{basePath}NoiseLab.PolyGen.Generated.dll",
-                        FileMode.Create, FileAccess.Write))
-                    {
-                        file.Write(peBytes, 0, peBytes.Length);
-                    }
+                var codeGenerationResult = database.GenerateCode();
+                WriteCodeGenerationArtifacts(codeGenerationResult, @"c:\Users\Sergey\Desktop\");
 
-                    using (var file = new FileStream(
-                        $@"{basePath}NoiseLab.PolyGen.Generated.pdb",
-                        FileMode.Create, FileAccess.Write))
-                    {
-                        file.Write(pdbBytes, 0, pdbBytes.Length);
-                    }
-
-                    using (var file = new FileStream(
-                        $@"{basePath}NoiseLab.PolyGen.Generated.xml",
-                        FileMode.Create, FileAccess.Write))
-                    {
-                        file.Write(xmlBytes, 0, xmlBytes.Length);
-                    }
-                }
-                var code = database.GenerateCode();
+                var code = database.GenerateCodeAsString();
                 Console.WriteLine(code);
             }
             catch (Exception ex)
@@ -137,6 +112,33 @@ namespace NoiseLab.PolyGen.Samples.CodeGeneration
                   .Build();
 
             return database;
+        }
+
+        private static void WriteCodeGenerationArtifacts(CodeGenerationArtifact codeGenerationArtifact, string basePath)
+        {
+            if (codeGenerationArtifact.EmitResult.Success)
+            {
+                using (var file = new FileStream(
+                    $@"{basePath}NoiseLab.PolyGen.Generated.dll",
+                    FileMode.Create, FileAccess.Write))
+                {
+                    file.Write(codeGenerationArtifact.PeBytes, 0, codeGenerationArtifact.PeBytes.Length);
+                }
+
+                using (var file = new FileStream(
+                    $@"{basePath}NoiseLab.PolyGen.Generated.pdb",
+                    FileMode.Create, FileAccess.Write))
+                {
+                    file.Write(codeGenerationArtifact.PdbBytes, 0, codeGenerationArtifact.PdbBytes.Length);
+                }
+
+                using (var file = new FileStream(
+                    $@"{basePath}NoiseLab.PolyGen.Generated.xml",
+                    FileMode.Create, FileAccess.Write))
+                {
+                    file.Write(codeGenerationArtifact.XmlBytes, 0, codeGenerationArtifact.XmlBytes.Length);
+                }
+            }
         }
     }
 }
