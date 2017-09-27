@@ -30,6 +30,7 @@ namespace NoiseLab.PolyGen.Core.Domain
             classes.Add(GenerateStartup());
             classes.Add(GenerateProgram());
             classes.AddRange(Tables.Select(table => table.GenerateWebApiController()));
+            classes.AddRange(GenerateInfrastructureClasses());
 
             MemberDeclarationSyntax @namespace = SyntaxFactory
                 .NamespaceDeclaration(SyntaxFactory.ParseName("NoiseLab.PolyGen.Generated"))
@@ -41,8 +42,8 @@ namespace NoiseLab.PolyGen.Core.Domain
                     SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.ComponentModel.DataAnnotations.Schema")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Threading.Tasks")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("Microsoft.EntityFrameworkCore")),
-                    SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("Microsoft.EntityFrameworkCore.Metadata")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("Microsoft.AspNetCore.Mvc")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("Microsoft.AspNetCore.Mvc.Filters")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("Microsoft.AspNetCore.Builder")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("Microsoft.AspNetCore.Hosting")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("Microsoft.Extensions.Configuration")),
@@ -62,6 +63,74 @@ namespace NoiseLab.PolyGen.Core.Domain
         internal IReadOnlyList<Table> Tables { get; }
 
         internal IEnumerable<Relationship> Relationships { get; }
+
+        private IEnumerable<ClassDeclarationSyntax> GenerateInfrastructureClasses()
+        {
+            var classes = new List<ClassDeclarationSyntax>();
+
+            classes.Add(GenerateModelStateValidationAttribute());
+            classes.Add(GenerateNullValidationAttribute());
+
+            return classes;
+        }
+
+        private static ClassDeclarationSyntax GenerateModelStateValidationAttribute()
+        {
+            var members = new List<MemberDeclarationSyntax>();
+
+            var configureServicesMethod = SyntaxFactory
+                .MethodDeclaration(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
+                    "OnActionExecuting")
+                .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+                .AddModifiers(SyntaxFactory.Token(SyntaxKind.OverrideKeyword))
+                .AddParameterListParameters(
+                    SyntaxFactory
+                        .Parameter(SyntaxFactory.Identifier("context"))
+                        .WithType(SyntaxFactory.ParseTypeName("ActionExecutingContext")))
+                .AddBodyStatements(
+                    SyntaxFactory.ParseStatement(
+                        "if (!context.ModelState.IsValid) { context.Result = new BadRequestObjectResult(context.ModelState); }"),
+                    SyntaxFactory.ParseStatement("base.OnActionExecuting(context);"));
+            members.Add(configureServicesMethod);
+
+            var @class = SyntaxFactory
+                .ClassDeclaration("ModelStateValidationAttribute")
+                .AddBaseListTypes(
+                    SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseName("ActionFilterAttribute")))
+                .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+                .AddMembers(members.ToArray());
+
+            return @class;
+        }
+
+        private static ClassDeclarationSyntax GenerateNullValidationAttribute()
+        {
+            var members = new List<MemberDeclarationSyntax>();
+
+            var configureServicesMethod = SyntaxFactory
+                .MethodDeclaration(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
+                    "OnActionExecuting")
+                .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+                .AddModifiers(SyntaxFactory.Token(SyntaxKind.OverrideKeyword))
+                .AddParameterListParameters(
+                    SyntaxFactory
+                        .Parameter(SyntaxFactory.Identifier("context"))
+                        .WithType(SyntaxFactory.ParseTypeName("ActionExecutingContext")))
+                .AddBodyStatements(
+                    SyntaxFactory.ParseStatement("var nullArguments = context.ActionArguments.Where(a => a.Value == null).ToList();"),
+                    SyntaxFactory.ParseStatement("if (nullArguments.Any()) { context.Result = new BadRequestObjectResult(new { arguments = nullArguments.Select(a => $\"The {a.Key} argument is required.\") }); }"),
+                    SyntaxFactory.ParseStatement("base.OnActionExecuting(context);"));
+            members.Add(configureServicesMethod);
+
+            var @class = SyntaxFactory
+                .ClassDeclaration("NullValidationAttribute")
+                .AddBaseListTypes(
+                    SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseName("ActionFilterAttribute")))
+                .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword))
+                .AddMembers(members.ToArray());
+
+            return @class;
+        }
 
         private MemberDeclarationSyntax GenerateDbContext()
         {
