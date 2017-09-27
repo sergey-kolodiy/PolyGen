@@ -37,7 +37,7 @@ namespace NoiseLab.PolyGen.Core.Domain
              *                               ^^^^^^^^^^^^^^^^^^^^^^
              */
             return Columns.Select(c => SyntaxFactory
-                .Parameter(SyntaxFactory.Identifier(c.Name.GenerateVerbatimIdentifierString()))
+                .Parameter(c.Name.GenerateVerbatimIdentifier())
                 .WithType(c.GeneratePropertyTypeSyntax())).ToArray();
         }
 
