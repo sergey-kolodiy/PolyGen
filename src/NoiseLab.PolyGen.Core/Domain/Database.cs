@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Formatting;
 
 namespace NoiseLab.PolyGen.Core.Domain
@@ -20,7 +22,62 @@ namespace NoiseLab.PolyGen.Core.Domain
             }
         }
 
-        internal CompilationUnitSyntax GenerateCompilationUnitSyntax()
+        public (EmitResult emitResult, byte[] bytes) GenerateExecutable()
+        {
+            var compilationUnit = GenerateCompilationUnitSyntax();
+            
+            var syntaxTree = CSharpSyntaxTree.Create(compilationUnit);
+            // TODO: Get rid of hard-coded path. Use assembly resources instead.
+            var basePath = @"c:\Work\NoiseLab\PolyGen\src\NoiseLab.PolyGen.Core\MetadataReferences\";
+            MetadataReference[] references =
+            {
+                MetadataReference.CreateFromFile($@"{basePath}netstandard.library.2.0.0\build\netstandard2.0\ref\netstandard.dll"),
+                MetadataReference.CreateFromFile($@"{basePath}netstandard.library.2.0.0\build\netstandard2.0\ref\System.Runtime.dll"),
+                MetadataReference.CreateFromFile($@"{basePath}system.componentmodel.annotations.4.4.0\ref\netcore50\System.ComponentModel.Annotations.dll"),
+                MetadataReference.CreateFromFile($@"{basePath}microsoft.entityframeworkcore.2.0.0\lib\netstandard2.0\Microsoft.EntityFrameworkCore.dll"),
+                MetadataReference.CreateFromFile($@"{basePath}microsoft.entityframeworkcore.relational.2.0.0\lib\netstandard2.0\Microsoft.EntityFrameworkCore.Relational.dll"),
+                MetadataReference.CreateFromFile($@"{basePath}microsoft.entityframeworkcore.sqlserver.2.0.0\lib\netstandard2.0\Microsoft.EntityFrameworkCore.SqlServer.dll"),
+                MetadataReference.CreateFromFile($@"{basePath}microsoft.aspnetcore.hosting.2.0.0\lib\netstandard2.0\Microsoft.AspNetCore.Hosting.dll"),
+                MetadataReference.CreateFromFile($@"{basePath}microsoft.aspnetcore.hosting.abstractions.2.0.0\lib\netstandard2.0\Microsoft.AspNetCore.Hosting.Abstractions.dll"),
+                MetadataReference.CreateFromFile($@"{basePath}microsoft.aspnetcore.http.abstractions.2.0.0\lib\netstandard2.0\Microsoft.AspNetCore.Http.Abstractions.dll"),
+                MetadataReference.CreateFromFile($@"{basePath}microsoft.aspnetcore.mvc.2.0.0\lib\netstandard2.0\Microsoft.AspNetCore.Mvc.dll"),
+                MetadataReference.CreateFromFile($@"{basePath}microsoft.aspnetcore.mvc.abstractions.2.0.0\lib\netstandard2.0\Microsoft.AspNetCore.Mvc.Abstractions.dll"),
+                MetadataReference.CreateFromFile($@"{basePath}microsoft.aspnetcore.mvc.core.2.0.0\lib\netstandard2.0\Microsoft.AspNetCore.Mvc.Core.dll"),
+                MetadataReference.CreateFromFile($@"{basePath}microsoft.aspnetcore.mvc.viewfeatures.2.0.0\lib\netstandard2.0\Microsoft.AspNetCore.Mvc.ViewFeatures.dll"),
+                MetadataReference.CreateFromFile($@"{basePath}microsoft.aspnetcore.server.iisintegration.2.0.0\lib\netstandard2.0\Microsoft.AspNetCore.Server.IISIntegration.dll"),
+                MetadataReference.CreateFromFile($@"{basePath}microsoft.aspnetcore.server.kestrel.2.0.0\lib\netstandard2.0\Microsoft.AspNetCore.Server.Kestrel.dll"),
+                MetadataReference.CreateFromFile($@"{basePath}microsoft.extensions.configuration.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll"),
+                MetadataReference.CreateFromFile($@"{basePath}microsoft.extensions.configuration.binder.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Binder.dll"),
+                MetadataReference.CreateFromFile($@"{basePath}microsoft.extensions.configuration.abstractions.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll"),
+                MetadataReference.CreateFromFile($@"{basePath}microsoft.extensions.configuration.environmentvariables.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.EnvironmentVariables.dll"),
+                MetadataReference.CreateFromFile($@"{basePath}microsoft.extensions.configuration.fileextensions.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.FileExtensions.dll"),
+                MetadataReference.CreateFromFile($@"{basePath}microsoft.extensions.configuration.json.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Json.dll"),
+                MetadataReference.CreateFromFile($@"{basePath}microsoft.extensions.dependencyinjection.abstractions.2.0.0\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll"),
+            };
+
+            var compilation = CSharpCompilation.Create(
+                "NoiseLab.PolyGen.Generated",
+                new[] { syntaxTree },
+                references,
+                new CSharpCompilationOptions(OutputKind.ConsoleApplication));
+
+            EmitResult result;
+            byte[] bytes = null;
+            using (var ms = new MemoryStream())
+            {
+                result = compilation.Emit(ms);
+
+                if (result.Success)
+                {
+                    ms.Seek(0, SeekOrigin.Begin);
+                    bytes = new byte[ms.Length];
+                    ms.Read(bytes, 0, (int) ms.Length);
+                }
+            }
+            return (result, bytes);
+        }
+
+        private CompilationUnitSyntax GenerateCompilationUnitSyntax()
         {
             var classes = new List<MemberDeclarationSyntax>();
             classes.AddRange(Tables.Select(t => t.GenerateOrmModel()));
