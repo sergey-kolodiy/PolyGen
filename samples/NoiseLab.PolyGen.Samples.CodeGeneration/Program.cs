@@ -13,13 +13,31 @@ namespace NoiseLab.PolyGen.Samples.CodeGeneration
             {
                 var database = BuildDatabase();
                 var codeGenerationResult = database.GenerateExecutable();
+                var peBytes = codeGenerationResult.peBytes;
+                var pdbBytes = codeGenerationResult.pdbBytes;
+                var xmlBytes = codeGenerationResult.xmlBytes;
                 if (codeGenerationResult.emitResult.Success)
                 {
+                    var basePath = @"c:\Users\Sergey\Desktop\";
                     using (var file = new FileStream(
-                        @"c:\Users\Sergey\Desktop\NoiseLab.PolyGen.Generated.dll",
+                        $@"{basePath}NoiseLab.PolyGen.Generated.dll",
                         FileMode.Create, FileAccess.Write))
                     {
-                        file.Write(codeGenerationResult.bytes, 0, codeGenerationResult.bytes.Length);
+                        file.Write(peBytes, 0, peBytes.Length);
+                    }
+
+                    using (var file = new FileStream(
+                        $@"{basePath}NoiseLab.PolyGen.Generated.pdb",
+                        FileMode.Create, FileAccess.Write))
+                    {
+                        file.Write(pdbBytes, 0, pdbBytes.Length);
+                    }
+
+                    using (var file = new FileStream(
+                        $@"{basePath}NoiseLab.PolyGen.Generated.xml",
+                        FileMode.Create, FileAccess.Write))
+                    {
+                        file.Write(xmlBytes, 0, xmlBytes.Length);
                     }
                 }
                 var code = database.GenerateCode();

@@ -22,7 +22,7 @@ namespace NoiseLab.PolyGen.Core.Domain
             }
         }
 
-        public (EmitResult emitResult, byte[] bytes) GenerateExecutable()
+        public (EmitResult emitResult, byte[] peBytes, byte[] pdbBytes, byte[] xmlBytes) GenerateExecutable()
         {
             var compilationUnit = GenerateCompilationUnitSyntax();
             
@@ -62,19 +62,32 @@ namespace NoiseLab.PolyGen.Core.Domain
                 new CSharpCompilationOptions(OutputKind.ConsoleApplication));
 
             EmitResult result;
-            byte[] bytes = null;
-            using (var ms = new MemoryStream())
+            byte[] peBytes = null;
+            byte[] pdbBytes = null;
+            byte[] xmlBytes = null;
+            using (var peStream = new MemoryStream())
             {
-                result = compilation.Emit(ms);
-
-                if (result.Success)
+                using (var pdbStream = new MemoryStream())
                 {
-                    ms.Seek(0, SeekOrigin.Begin);
-                    bytes = new byte[ms.Length];
-                    ms.Read(bytes, 0, (int) ms.Length);
+                    using (var xmlStream = new MemoryStream())
+                    {
+                        result = compilation.Emit(peStream, pdbStream, xmlStream);
+
+                        if (result.Success)
+                        {
+                            peStream.Seek(0, SeekOrigin.Begin);
+                            peBytes = peStream.ToArray();
+
+                            pdbStream.Seek(0, SeekOrigin.Begin);
+                            pdbBytes = pdbStream.ToArray();
+
+                            xmlStream.Seek(0, SeekOrigin.Begin);
+                            xmlBytes = xmlStream.ToArray();
+                        }
+                    }
                 }
             }
-            return (result, bytes);
+            return (result, peBytes, pdbBytes, xmlBytes);
         }
 
         private CompilationUnitSyntax GenerateCompilationUnitSyntax()
