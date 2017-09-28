@@ -10,12 +10,6 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
             return this;
         }
 
-        public new GuidColumnSpecificationBuilder PrimaryKey()
-        {
-            base.PrimaryKey();
-            return this;
-        }
-
         public new GuidColumnSpecificationBuilder Computed()
         {
             base.Computed();
@@ -24,7 +18,7 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
 
         protected internal override AbstractDataType DataType { get; } = AbstractDataType.Guid;
 
-        internal GuidColumnSpecificationBuilder(ColumnBuilder columnBuilder)
+        internal GuidColumnSpecificationBuilder(ColumnBuilderBase columnBuilder)
             : base(columnBuilder)
         {
         }

@@ -12,6 +12,11 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
             return _columnBuilder.Column(name);
         }
 
+        public PrimaryKeyColumnBuilder PrimaryKeyColumn(string name)
+        {
+            return _columnBuilder.PrimaryKeyColumn(name);
+        }
+
         public TableBuilder Table(string schema, string name)
         {
             return _columnBuilder.Table(schema, name);
@@ -30,7 +35,6 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
         protected internal abstract AbstractDataType DataType { get; }
         protected internal int? MaxLengthInternal { get; private set; }
         protected internal bool NullableInternal { get; private set; }
-        protected internal bool PrimaryKeyInternal { get; private set; }
         protected internal bool IdentityInternal { get; private set; }
         protected internal bool ComputedInternal { get; private set; }
 
@@ -43,11 +47,6 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
 
         protected void Nullable()
         {
-            if (PrimaryKeyInternal)
-            {
-                throw new InvalidOperationException(
-                    $"Column \"{_columnBuilder.Name}\" cannot be nullable because it is a part of the primary key.");
-            }
             if (IdentityInternal)
             {
                 throw new InvalidOperationException(
@@ -55,17 +54,6 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
             }
 
             NullableInternal = true;
-        }
-
-        protected void PrimaryKey()
-        {
-            if (NullableInternal)
-            {
-                throw new InvalidOperationException(
-                    $"Nullable column \"{_columnBuilder.Name}\" cannot be set as a part of the primary key.");
-            }
-
-            PrimaryKeyInternal = true;
         }
 
         protected void Identity()
@@ -92,7 +80,7 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
             ComputedInternal = true;
         }
 
-        internal ColumnSpecificationBuilderBase(ColumnBuilder columnBuilder)
+        internal ColumnSpecificationBuilderBase(ColumnBuilderBase columnBuilder)
         {
             _columnBuilder = columnBuilder;
         }
@@ -106,6 +94,6 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
             // TODO: Add other validations here.
         }
 
-        private readonly ColumnBuilder _columnBuilder;
+        private readonly ColumnBuilderBase _columnBuilder;
     }
 }

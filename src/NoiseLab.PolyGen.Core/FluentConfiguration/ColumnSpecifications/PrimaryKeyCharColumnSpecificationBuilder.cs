@@ -2,21 +2,15 @@ using NoiseLab.PolyGen.Core.Domain;
 
 namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
 {
-    public class CharColumnSpecificationBuilder : ColumnSpecificationBuilderBase
+    public class PrimaryKeyCharColumnSpecificationBuilder : ColumnSpecificationBuilderBase
     {
-        public new CharColumnSpecificationBuilder Nullable()
-        {
-            base.Nullable();
-            return this;
-        }
-
-        public new CharColumnSpecificationBuilder Identity()
+        public new PrimaryKeyCharColumnSpecificationBuilder Identity()
         {
             base.Identity();
             return this;
         }
 
-        public new CharColumnSpecificationBuilder Computed()
+        public new PrimaryKeyCharColumnSpecificationBuilder Computed()
         {
             base.Computed();
             return this;
@@ -24,7 +18,7 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
 
         protected internal override AbstractDataType DataType { get; } = AbstractDataType.Char;
 
-        internal CharColumnSpecificationBuilder(ColumnBuilderBase columnBuilder)
+        internal PrimaryKeyCharColumnSpecificationBuilder(ColumnBuilderBase columnBuilder)
             : base(columnBuilder)
         {
             // TODO: Is it really required to explicitly set MaxLength for System.Char property?

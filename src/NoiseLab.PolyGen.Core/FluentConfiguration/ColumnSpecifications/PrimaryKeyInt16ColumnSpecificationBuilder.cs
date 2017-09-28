@@ -2,21 +2,15 @@ using NoiseLab.PolyGen.Core.Domain;
 
 namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
 {
-    public class Int16ColumnSpecificationBuilder : ColumnSpecificationBuilderBase
+    public class PrimaryKeyInt16ColumnSpecificationBuilder : ColumnSpecificationBuilderBase
     {
-        public new Int16ColumnSpecificationBuilder Nullable()
-        {
-            base.Nullable();
-            return this;
-        }
-
-        public new Int16ColumnSpecificationBuilder Identity()
+        public new PrimaryKeyInt16ColumnSpecificationBuilder Identity()
         {
             base.Identity();
             return this;
         }
 
-        public new Int16ColumnSpecificationBuilder Computed()
+        public new PrimaryKeyInt16ColumnSpecificationBuilder Computed()
         {
             base.Computed();
             return this;
@@ -24,7 +18,7 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
 
         protected internal override AbstractDataType DataType { get; } = AbstractDataType.Int16;
 
-        internal Int16ColumnSpecificationBuilder(ColumnBuilderBase columnBuilder)
+        internal PrimaryKeyInt16ColumnSpecificationBuilder(ColumnBuilderBase columnBuilder)
             : base(columnBuilder)
         {
         }

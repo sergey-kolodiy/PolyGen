@@ -10,12 +10,6 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
             return this;
         }
 
-        public new DecimalColumnSpecificationBuilder PrimaryKey()
-        {
-            base.PrimaryKey();
-            return this;
-        }
-
         public new DecimalColumnSpecificationBuilder Identity()
         {
             base.Identity();
@@ -30,7 +24,7 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
 
         protected internal override AbstractDataType DataType { get; } = AbstractDataType.Decimal;
 
-        internal DecimalColumnSpecificationBuilder(ColumnBuilder columnBuilder)
+        internal DecimalColumnSpecificationBuilder(ColumnBuilderBase columnBuilder)
             : base(columnBuilder)
         {
         }

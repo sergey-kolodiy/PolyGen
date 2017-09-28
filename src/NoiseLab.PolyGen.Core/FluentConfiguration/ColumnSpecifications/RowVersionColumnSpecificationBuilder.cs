@@ -16,13 +16,6 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
             return this;
         }
 
-        public new RowVersionColumnSpecificationBuilder PrimaryKey()
-        {
-            // TODO: Does it make sense to set RowVersion column as a (part of) Primary Key?
-            base.PrimaryKey();
-            return this;
-        }
-
         public new RowVersionColumnSpecificationBuilder Identity()
         {
             base.Identity();
@@ -38,7 +31,7 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
 
         protected internal override AbstractDataType DataType { get; } = AbstractDataType.RowVersion;
 
-        internal RowVersionColumnSpecificationBuilder(ColumnBuilder columnBuilder)
+        internal RowVersionColumnSpecificationBuilder(ColumnBuilderBase columnBuilder)
             : base(columnBuilder)
         {
         }

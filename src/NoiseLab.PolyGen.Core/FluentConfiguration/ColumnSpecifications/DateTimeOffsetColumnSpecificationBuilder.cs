@@ -10,12 +10,6 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
             return this;
         }
 
-        public new DateTimeOffsetColumnSpecificationBuilder PrimaryKey()
-        {
-            base.PrimaryKey();
-            return this;
-        }
-
         public new DateTimeOffsetColumnSpecificationBuilder Computed()
         {
             base.Computed();
@@ -24,7 +18,7 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
 
         protected internal override AbstractDataType DataType { get; } = AbstractDataType.DateTimeOffset;
 
-        internal DateTimeOffsetColumnSpecificationBuilder(ColumnBuilder columnBuilder)
+        internal DateTimeOffsetColumnSpecificationBuilder(ColumnBuilderBase columnBuilder)
             : base(columnBuilder)
         {
         }

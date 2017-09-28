@@ -66,7 +66,7 @@ namespace NoiseLab.PolyGen.Core.UnitTests.FluentConfiguration
             Assert.Throws<InvalidOperationException>(() =>
                 builder
                     .Table("Test", "Test")
-                        .Column("Test").String()
+                        .PrimaryKeyColumn("Test").String()
                     .Table("Test", "Test"));
         }
     }

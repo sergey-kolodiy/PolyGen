@@ -2,27 +2,21 @@ using NoiseLab.PolyGen.Core.Domain;
 
 namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
 {
-    public class StringColumnSpecificationBuilder : ColumnSpecificationBuilderBase
+    public class PrimaryKeyStringColumnSpecificationBuilder : ColumnSpecificationBuilderBase
     {
-        public new StringColumnSpecificationBuilder MaxLength(int maxLength)
+        public new PrimaryKeyStringColumnSpecificationBuilder MaxLength(int maxLength)
         {
             base.MaxLength(maxLength);
             return this;
         }
 
-        public new StringColumnSpecificationBuilder Nullable()
-        {
-            base.Nullable();
-            return this;
-        }
-
-        public new StringColumnSpecificationBuilder Identity()
+        public new PrimaryKeyStringColumnSpecificationBuilder Identity()
         {
             base.Identity();
             return this;
         }
 
-        public new StringColumnSpecificationBuilder Computed()
+        public new PrimaryKeyStringColumnSpecificationBuilder Computed()
         {
             base.Computed();
             return this;
@@ -30,7 +24,7 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
 
         protected internal override AbstractDataType DataType { get; } = AbstractDataType.String;
 
-        internal StringColumnSpecificationBuilder(ColumnBuilderBase columnBuilder)
+        internal PrimaryKeyStringColumnSpecificationBuilder(ColumnBuilderBase columnBuilder)
             : base(columnBuilder)
         {
         }

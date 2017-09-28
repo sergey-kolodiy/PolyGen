@@ -10,12 +10,6 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
             return this;
         }
 
-        public new TimeSpanColumnSpecificationBuilder PrimaryKey()
-        {
-            base.PrimaryKey();
-            return this;
-        }
-
         public new TimeSpanColumnSpecificationBuilder Computed()
         {
             base.Computed();
@@ -24,7 +18,7 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
 
         protected internal override AbstractDataType DataType { get; } = AbstractDataType.TimeSpan;
 
-        internal TimeSpanColumnSpecificationBuilder(ColumnBuilder columnBuilder)
+        internal TimeSpanColumnSpecificationBuilder(ColumnBuilderBase columnBuilder)
             : base(columnBuilder)
         {
         }

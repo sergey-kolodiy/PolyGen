@@ -16,12 +16,6 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
             return this;
         }
 
-        public new XmlColumnSpecificationBuilder PrimaryKey()
-        {
-            base.PrimaryKey();
-            return this;
-        }
-
         public new XmlColumnSpecificationBuilder Identity()
         {
             base.Identity();
@@ -36,7 +30,7 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
 
         protected internal override AbstractDataType DataType { get; } = AbstractDataType.Xml;
 
-        internal XmlColumnSpecificationBuilder(ColumnBuilder columnBuilder)
+        internal XmlColumnSpecificationBuilder(ColumnBuilderBase columnBuilder)
             : base(columnBuilder)
         {
         }

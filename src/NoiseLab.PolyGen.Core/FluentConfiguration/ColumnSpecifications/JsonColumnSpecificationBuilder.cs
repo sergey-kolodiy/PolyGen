@@ -16,12 +16,6 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
             return this;
         }
 
-        public new JsonColumnSpecificationBuilder PrimaryKey()
-        {
-            base.PrimaryKey();
-            return this;
-        }
-
         public new JsonColumnSpecificationBuilder Identity()
         {
             base.Identity();
@@ -36,7 +30,7 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
 
         protected internal override AbstractDataType DataType { get; } = AbstractDataType.Json;
 
-        internal JsonColumnSpecificationBuilder(ColumnBuilder columnBuilder)
+        internal JsonColumnSpecificationBuilder(ColumnBuilderBase columnBuilder)
             : base(columnBuilder)
         {
         }

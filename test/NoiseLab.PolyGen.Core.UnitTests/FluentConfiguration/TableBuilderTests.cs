@@ -7,29 +7,29 @@ namespace NoiseLab.PolyGen.Core.UnitTests.FluentConfiguration
     public class TableBuilderTests
     {
         [Fact]
-        public void Column_NameIsNull_ThrowsArgumentException()
+        public void PrimaryKeyColumn_NameIsNull_ThrowsArgumentException()
         {
             // Arrange
             var builder = DatabaseBuilder.Create()
                 .Table("Test", "Test");
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => builder.Column(null));
+            Assert.Throws<ArgumentException>(() => builder.PrimaryKeyColumn(null));
         }
 
         [Fact]
-        public void Column_NameDoesNotMatchDefaultPattern_ThrowsArgumentException()
+        public void PrimaryKeyColumn_NameDoesNotMatchDefaultPattern_ThrowsArgumentException()
         {
             // Arrange
             var builder = DatabaseBuilder.Create()
                 .Table("Test", "Test");
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => builder.Column("1Test"));
+            Assert.Throws<ArgumentException>(() => builder.PrimaryKeyColumn("1Test"));
         }
 
         [Fact]
-        public void Column_ColumnAlreadyExists_ThrowsInvalidOperationException()
+        public void PrimaryKeyColumn_ColumnAlreadyExists_ThrowsInvalidOperationException()
         {
             // Arrange
             var builder = DatabaseBuilder.Create()
@@ -37,8 +37,8 @@ namespace NoiseLab.PolyGen.Core.UnitTests.FluentConfiguration
 
             // Act & Assert
             Assert.Throws<InvalidOperationException>(() => builder
-                .Column("Test").String()
-                .Column("Test"));
+                .PrimaryKeyColumn("Test").String()
+                .PrimaryKeyColumn("Test"));
         }
     }
 }

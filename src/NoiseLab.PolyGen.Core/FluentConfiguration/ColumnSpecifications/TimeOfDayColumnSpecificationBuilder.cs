@@ -10,12 +10,6 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
             return this;
         }
 
-        public new TimeOfDayColumnSpecificationBuilder PrimaryKey()
-        {
-            base.PrimaryKey();
-            return this;
-        }
-
         public new TimeOfDayColumnSpecificationBuilder Identity()
         {
             base.Identity();
@@ -30,7 +24,7 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
 
         protected internal override AbstractDataType DataType { get; } = AbstractDataType.TimeOfDay;
 
-        internal TimeOfDayColumnSpecificationBuilder(ColumnBuilder columnBuilder)
+        internal TimeOfDayColumnSpecificationBuilder(ColumnBuilderBase columnBuilder)
             : base(columnBuilder)
         {
         }

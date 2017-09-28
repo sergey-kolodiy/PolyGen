@@ -40,9 +40,9 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration
             return _tableBuilders.FirstOrDefault(tf => tf.DefinesTable(schema, name));
         }
 
-        internal ColumnBuilder GetColumnBuilder(string tableSchema, string tableName, string columnName)
+        internal ColumnBuilderBase GetColumnBuilder(string tableSchema, string tableName, string columnName)
         {
-            ColumnBuilder result = null;
+            ColumnBuilderBase result = null;
             var tableBuilder = GetTableBuilder(tableSchema, tableName);
             if (tableBuilder != null)
             {

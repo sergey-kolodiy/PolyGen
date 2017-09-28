@@ -11,7 +11,9 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration
     {
         private readonly string _schema;
         private readonly string _name;
+        private readonly List<PrimaryKeyColumnBuilder> _primaryKeyColumnBuilders = new List<PrimaryKeyColumnBuilder>();
         private readonly List<ColumnBuilder> _columnBuilders = new List<ColumnBuilder>();
+        private readonly List<ColumnBuilderBase> _allColumnBuilders = new List<ColumnBuilderBase>();
         private int _ordinal;
         private readonly DatabaseBuilder _schemaBuilder;
         private Table _table;
@@ -24,7 +26,23 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration
             _schemaBuilder = schemaBuilder;
         }
 
-        public ColumnBuilder Column(string name)
+        public PrimaryKeyColumnBuilder PrimaryKeyColumn(string name)
+        {
+            name.ThrowIfNullOrWhitespace(nameof(name));
+            DefaultNamePattern.ThrowIfDoesNotMatch(name, nameof(name));
+
+            if (DefinesColumn(name))
+            {
+                throw new InvalidOperationException($"Column \"{name}\" is already defined for table \"{FullName}\".");
+            }
+
+            var columnBuilder = new PrimaryKeyColumnBuilder(this, _ordinal++, name);
+            _primaryKeyColumnBuilders.Add(columnBuilder);
+            _allColumnBuilders.Add(columnBuilder);
+            return columnBuilder;
+        }
+
+        internal ColumnBuilder Column(string name)
         {
             name.ThrowIfNullOrWhitespace(nameof(name));
             DefaultNamePattern.ThrowIfDoesNotMatch(name, nameof(name));
@@ -36,6 +54,7 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration
 
             var columnBuilder = new ColumnBuilder(this, _ordinal++, name);
             _columnBuilders.Add(columnBuilder);
+            _allColumnBuilders.Add(columnBuilder);
             return columnBuilder;
         }
 
@@ -67,9 +86,10 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration
         {
             if (_table == null)
             {
-                var columns = _columnBuilders.Select(cf => cf.BuildColumn()).ToList();
-                var primaryKey = new PrimaryKey(columns.Where(c => c.PrimaryKey).ToList());
-                _table = new Table(_schema, _name, columns, primaryKey);
+                var allColumns = _allColumnBuilders.Select(cf => cf.BuildColumn()).ToList();
+                var primaryKeyColumns = _primaryKeyColumnBuilders.Select(cf => cf.BuildColumn()).ToList();
+                var primaryKey = new PrimaryKey(primaryKeyColumns);
+                _table = new Table(_schema, _name, allColumns, primaryKey);
             }
             return _table;
         }
@@ -79,19 +99,19 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration
             return _schema.Equals(schema, StringComparison.OrdinalIgnoreCase) && _name.Equals(name, StringComparison.OrdinalIgnoreCase);
         }
 
-        internal ColumnBuilder GetColumnBuilder(string columnName)
+        internal ColumnBuilderBase GetColumnBuilder(string columnName)
         {
-            return _columnBuilders.FirstOrDefault(cf => cf.IsNamed(columnName));
+            return _allColumnBuilders.FirstOrDefault(cf => cf.IsNamed(columnName));
         }
 
         private bool DefinesColumn(string name)
         {
-            return _columnBuilders.Any(cf => cf.IsNamed(name));
+            return _allColumnBuilders.Any(cf => cf.IsNamed(name));
         }
 
         private void ThrowIfTableContainsSingleComputedColumn()
         {
-            if (_columnBuilders.Count == 1 && _columnBuilders[0].IsComputed())
+            if (_allColumnBuilders.Count == 1 && _allColumnBuilders[0].IsComputed())
             {
                 throw new InvalidOperationException(
                     $"The table {FullName} must have at least one column that is not computed.");
@@ -100,7 +120,7 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration
 
         private void ThrowIfTableContainsMoreThanOneRowVersionColumn()
         {
-            var rowVersionColumnBuilders = _columnBuilders.Where(cf => cf.IsRowVersion()).ToList();
+            var rowVersionColumnBuilders = _allColumnBuilders.Where(cf => cf.IsRowVersion()).ToList();
             if (rowVersionColumnBuilders.Count > 1)
             {
                 throw new InvalidOperationException(
