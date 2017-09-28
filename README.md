@@ -10,17 +10,17 @@ PolyGen is a code generator that produces ORM layer, REST API and a (coming soon
 1. Define your database structure using Fluent Configuration API:
 
 ```csharp
-var databaseSchema = SchemaBuilder.Create()
-    .Table("user", "User")
-        .Column("SSN").String().MaxLength(9).PrimaryKey()
-        .Column("FirstName").String().MaxLength(100).PrimaryKey()
-        .Column("LastName").String().MaxLength(100).PrimaryKey()
+var database = DatabaseBuilder.Create()
+    .Table("user", "Person")
+        .PrimaryKeyColumn("SSN").String().MaxLength(9)
+        .PrimaryKeyColumn("FirstName").String().MaxLength(100)
+        .PrimaryKeyColumn("LastName").String().MaxLength(100)
         .Column("Nickname").String().MaxLength(100).Nullable()
         .Column("BirthDate").Date()
         .Column("Age").Int32().Computed()
         .Column("RowVersion").RowVersion()
     .Table("blogging", "Blog")
-        .Column("Id").Int32().PrimaryKey().Identity()
+        .PrimaryKeyColumn("Id").Int32().Identity()
         .Column("AuthorSSN").String().MaxLength(9)
         .Column("AuthorFirstName").String().MaxLength(100)
         .Column("AuthorLastName").String().MaxLength(100)
@@ -28,9 +28,8 @@ var databaseSchema = SchemaBuilder.Create()
         .Column("Description").String().MaxLength(500)
         .Column("URL").String().MaxLength(1000)
         .Column("Founded").Date()
-        .Column("RowVersion").RowVersion()
     .Table("blogging", "Post")
-        .Column("Id").Int32().PrimaryKey().Identity()
+        .PrimaryKeyColumn("Id").Int32().Identity()
         .Column("BlogId").Int32()
         .Column("Title").String().MaxLength(200)
         .Column("Summary").String().MaxLength(1000)
@@ -39,59 +38,55 @@ var databaseSchema = SchemaBuilder.Create()
         .Column("EditorFirstName").String().MaxLength(100).Nullable()
         .Column("EditorLastName").String().MaxLength(100).Nullable()
         .Column("Rating").Byte()
-        .Column("RowVersion").RowVersion()
     .Table("blogging", "Tag")
-        .Column("Id").Int32().PrimaryKey().Identity()
+        .PrimaryKeyColumn("Id").Int32().Identity()
         .Column("Name").String().MaxLength(200)
         .Column("Description").String().MaxLength(500)
-        .Column("RowVersion").RowVersion()
     .Table("blogging", "PostTag")
-        .Column("Id").Int32().PrimaryKey().Identity()
+        .PrimaryKeyColumn("Id").Int32().Identity()
         .Column("PostId").Int32()
         .Column("TagId").Int32()
-        .Column("RowVersion").RowVersion()
     .Table("blogging", "Comment")
-        .Column("Id").Int32().PrimaryKey().Identity()
+        .PrimaryKeyColumn("Id").Int32().Identity()
         .Column("PostId").Int32()
         .Column("AuthorSSN").String().MaxLength(9)
         .Column("AuthorFirstName").String().MaxLength(100)
         .Column("AuthorLastName").String().MaxLength(100)
         .Column("Content").String()
         .Column("DateTime").String()
-        .Column("RowVersion").RowVersion()
-    .Relationship("Author_Blogs")
+    .Relationship("FK_Author_Blogs")
         .From("blogging", "Blog")
         .To("user", "Person")
             .Reference("AuthorSSN", "SSN")
             .Reference("AuthorFirstName", "FirstName")
             .Reference("AuthorLastName", "LastName")
             .OnDeleteCascade()
-    .Relationship("Blog_Posts")
+    .Relationship("FK_Blog_Posts")
         .From("blogging", "Post")
         .To("blogging", "Blog")
             .Reference("BlogId", "Id")
-    .Relationship("Post_Comments")
+    .Relationship("FK_Post_Comments")
         .From("blogging", "Comment")
         .To("blogging", "Post")
             .Reference("PostId", "Id")
-    .Relationship("Comment_Author")
+    .Relationship("FK_Comment_Author")
         .From("blogging", "Comment")
         .To("user", "Person")
             .Reference("AuthorSSN", "SSN")
             .Reference("AuthorFirstName", "FirstName")
             .Reference("AuthorLastName", "LastName")
-    .Relationship("Post_Editor")
+    .Relationship("FK_Post_Editor")
         .From("blogging", "Post")
         .To("user", "Person")
             .Reference("EditorSSN", "SSN")
             .Reference("EditorFirstName", "FirstName")
             .Reference("EditorLastName", "LastName")
             .OnDeleteSetNull()
-    .Relationship("Post_PostTags")
+    .Relationship("FK_Post_PostTags")
         .From("blogging", "PostTag")
         .To("blogging", "Post")
             .Reference("PostId", "Id")
-    .Relationship("Tag_PostTags")
+    .Relationship("FK_Tag_PostTags")
         .From("blogging", "PostTag")
         .To("blogging", "Tag")
             .Reference("TagId", "Id")
@@ -101,7 +96,7 @@ var databaseSchema = SchemaBuilder.Create()
 2. Generate code for the database schema:
 
 ```csharp
-string code = databaseSchema.GenerateCode();
+string code = database.GenerateCode();
 ```
 
 3. PolyGen will generate the following classes for you:
@@ -123,8 +118,8 @@ namespace NoiseLab.PolyGen.Generated
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
@@ -1538,6 +1533,34 @@ namespace NoiseLab.PolyGen.Generated
             _context.Remove(entity);
             await _context.SaveChangesAsync();
             return Ok();
+        }
+    }
+
+    public class ModelStateValidationAttribute : ActionFilterAttribute
+    {
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            if (!context.ModelState.IsValid)
+            {
+                context.Result = new BadRequestObjectResult(context.ModelState);
+            }
+            base.OnActionExecuting(context);
+        }
+    }
+
+    public class NullValidationAttribute : ActionFilterAttribute
+    {
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            var nullArguments = context.ActionArguments.Where(a => a.Value == null).ToList();
+            if (nullArguments.Any())
+            {
+                context.Result = new BadRequestObjectResult(new
+                {
+                    arguments = nullArguments.Select(a => $"The {a.Key} argument is required.")
+                });
+            }
+            base.OnActionExecuting(context);
         }
     }
 }
