@@ -63,7 +63,6 @@ namespace NoiseLab.PolyGen.Core.Domain
 
                 if (MaxLength.HasValue)
                 {
-                    // TODO: For some data types, MaxLength should be used, not StringLength.
                     attributeLists.Add(GenerateStringLengthAttribute(MaxLength.Value));
                 }
                 if (!Nullable)

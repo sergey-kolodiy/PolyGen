@@ -10,12 +10,6 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.ColumnSpecifications
             return this;
         }
 
-        public new PrimaryKeyStringColumnSpecificationBuilder Identity()
-        {
-            base.Identity();
-            return this;
-        }
-
         public new PrimaryKeyStringColumnSpecificationBuilder Computed()
         {
             base.Computed();
