@@ -258,6 +258,7 @@ namespace NoiseLab.PolyGen.Core.Domain
 
             MemberDeclarationSyntax GenerateGetEntitiesMethod()
             {
+                // TODO: Consider using .AsNoTracking() for GET methods for performance improvement.
                 return SyntaxFactory
                     .MethodDeclaration(SyntaxFactory.ParseTypeName($"Task<IEnumerable<{_name.OrmModelClassName}>>"), "Get")
                     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.AsyncKeyword))
@@ -272,6 +273,7 @@ namespace NoiseLab.PolyGen.Core.Domain
 
             MemberDeclarationSyntax GenerateGetEntityByIdMethod()
             {
+                // TODO: Consider using .AsNoTracking() for GET methods for performance improvement.
                 return SyntaxFactory
                     .MethodDeclaration(SyntaxFactory.ParseTypeName("Task<IActionResult>"), "GetById")
                     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.AsyncKeyword))
