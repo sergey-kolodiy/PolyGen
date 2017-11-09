@@ -150,7 +150,7 @@ namespace NoiseLab.PolyGen.Core.Domain
 
         internal IEnumerable<Relationship> Relationships { get; }
 
-        private IEnumerable<ClassDeclarationSyntax> GenerateInfrastructureClasses()
+        private static IEnumerable<ClassDeclarationSyntax> GenerateInfrastructureClasses()
         {
             var classes = new List<ClassDeclarationSyntax>();
 
