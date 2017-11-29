@@ -91,7 +91,7 @@ namespace NoiseLab.PolyGen.Core.Domain
 
         private static string CreateMetadataReference(string nugetPackageName, string path)
         {
-            // TODO: Is it possible to avoid I/O tasks for code generation?
+            // TODO: Is it possible to avoid disk I/O for code generation?
             var resource = (byte[])Resources.ResourceManager.GetObject(nugetPackageName.Replace('.', '_'));
             using (var memoryStream = new MemoryStream(resource))
             {
@@ -152,10 +152,11 @@ namespace NoiseLab.PolyGen.Core.Domain
 
         private static IEnumerable<ClassDeclarationSyntax> GenerateInfrastructureClasses()
         {
-            var classes = new List<ClassDeclarationSyntax>();
-
-            classes.Add(GenerateModelStateValidationAttribute());
-            classes.Add(GenerateNullValidationAttribute());
+            var classes = new List<ClassDeclarationSyntax>
+            {
+                GenerateModelStateValidationAttribute(),
+                GenerateNullValidationAttribute()
+            };
 
             return classes;
         }
