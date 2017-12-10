@@ -11,11 +11,11 @@ namespace NoiseLab.PolyGen.Samples.CodeGeneration
         {
             try
             {
-                var database = BuildDatabase();
-                var codeGenerationResult = database.GenerateCode();
+                var model = BuildModel();
+                var codeGenerationResult = model.GenerateCode();
                 WriteCodeGenerationArtifacts(codeGenerationResult, @"c:\Users\Sergey\Desktop\");
 
-                var code = database.GenerateCodeAsString();
+                var code = model.GenerateCodeAsString();
                 Console.WriteLine(code);
             }
             catch (Exception ex)
@@ -25,52 +25,52 @@ namespace NoiseLab.PolyGen.Samples.CodeGeneration
             Console.ReadLine();
         }
 
-        private static Database BuildDatabase()
+        private static Model BuildModel()
         {
-            var database = DatabaseBuilder.Create()
-                .Table("user", "Person")
-                    .PrimaryKeyColumn("SSN").String().MaxLength(9)
-                    .PrimaryKeyColumn("FirstName").String().MaxLength(100)
-                    .PrimaryKeyColumn("LastName").String().MaxLength(100)
-                    .Column("Nickname").String().MaxLength(100).Nullable()
-                    .Column("BirthDate").Date()
-                    .Column("Age").Int32().Computed()
-                    .Column("RowVersion").RowVersion()
-                .Table("blogging", "Blog")
-                    .PrimaryKeyColumn("Id").Int32().Identity()
-                    .Column("AuthorSSN").String().MaxLength(9)
-                    .Column("AuthorFirstName").String().MaxLength(100)
-                    .Column("AuthorLastName").String().MaxLength(100)
-                    .Column("Title").String().MaxLength(200)
-                    .Column("Description").String().MaxLength(500)
-                    .Column("URL").String().MaxLength(1000)
-                    .Column("Founded").Date()
-                .Table("blogging", "Post")
-                    .PrimaryKeyColumn("Id").Int32().Identity()
-                    .Column("BlogId").Int32()
-                    .Column("Title").String().MaxLength(200)
-                    .Column("Summary").String().MaxLength(1000)
-                    .Column("Content").String()
-                    .Column("EditorSSN").String().MaxLength(9).Nullable()
-                    .Column("EditorFirstName").String().MaxLength(100).Nullable()
-                    .Column("EditorLastName").String().MaxLength(100).Nullable()
-                    .Column("Rating").Byte()
-                .Table("blogging", "Tag")
-                    .PrimaryKeyColumn("Id").Int32().Identity()
-                    .Column("Name").String().MaxLength(200)
-                    .Column("Description").String().MaxLength(500)
-                .Table("blogging", "PostTag")
-                    .PrimaryKeyColumn("Id").Int32().Identity()
-                    .Column("PostId").Int32()
-                    .Column("TagId").Int32()
-                .Table("blogging", "Comment")
-                    .PrimaryKeyColumn("Id").Int32().Identity()
-                    .Column("PostId").Int32()
-                    .Column("AuthorSSN").String().MaxLength(9)
-                    .Column("AuthorFirstName").String().MaxLength(100)
-                    .Column("AuthorLastName").String().MaxLength(100)
-                    .Column("Content").String()
-                    .Column("DateTime").String()
+            var model = ModelBuilder.Create()
+                .Entity("user", "Person")
+                    .PrimaryKeyProperty("SSN").String().MaxLength(9)
+                    .PrimaryKeyProperty("FirstName").String().MaxLength(100)
+                    .PrimaryKeyProperty("LastName").String().MaxLength(100)
+                    .Property("Nickname").String().MaxLength(100).Nullable()
+                    .Property("BirthDate").Date()
+                    .Property("Age").Int32().Computed()
+                    .Property("RowVersion").RowVersion()
+                .Entity("blogging", "Blog")
+                    .PrimaryKeyProperty("Id").Int32().Identity()
+                    .Property("AuthorSSN").String().MaxLength(9)
+                    .Property("AuthorFirstName").String().MaxLength(100)
+                    .Property("AuthorLastName").String().MaxLength(100)
+                    .Property("Title").String().MaxLength(200)
+                    .Property("Description").String().MaxLength(500)
+                    .Property("URL").String().MaxLength(1000)
+                    .Property("Founded").Date()
+                .Entity("blogging", "Post")
+                    .PrimaryKeyProperty("Id").Int32().Identity()
+                    .Property("BlogId").Int32()
+                    .Property("Title").String().MaxLength(200)
+                    .Property("Summary").String().MaxLength(1000)
+                    .Property("Content").String()
+                    .Property("EditorSSN").String().MaxLength(9).Nullable()
+                    .Property("EditorFirstName").String().MaxLength(100).Nullable()
+                    .Property("EditorLastName").String().MaxLength(100).Nullable()
+                    .Property("Rating").Byte()
+                .Entity("blogging", "Tag")
+                    .PrimaryKeyProperty("Id").Int32().Identity()
+                    .Property("Name").String().MaxLength(200)
+                    .Property("Description").String().MaxLength(500)
+                .Entity("blogging", "PostTag")
+                    .PrimaryKeyProperty("Id").Int32().Identity()
+                    .Property("PostId").Int32()
+                    .Property("TagId").Int32()
+                .Entity("blogging", "Comment")
+                    .PrimaryKeyProperty("Id").Int32().Identity()
+                    .Property("PostId").Int32()
+                    .Property("AuthorSSN").String().MaxLength(9)
+                    .Property("AuthorFirstName").String().MaxLength(100)
+                    .Property("AuthorLastName").String().MaxLength(100)
+                    .Property("Content").String()
+                    .Property("DateTime").String()
                 .Relationship("FK_Author_Blogs")
                     .From("blogging", "Blog")
                     .To("user", "Person")
@@ -110,7 +110,7 @@ namespace NoiseLab.PolyGen.Samples.CodeGeneration
             // TODO: Implement configuring indexes.		
             .Build();
 
-            return database;
+            return model;
         }
 
         private static void WriteCodeGenerationArtifacts(CodeGenerationArtifact codeGenerationArtifact, string basePath)

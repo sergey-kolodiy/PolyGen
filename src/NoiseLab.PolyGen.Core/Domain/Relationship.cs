@@ -5,13 +5,13 @@ namespace NoiseLab.PolyGen.Core.Domain
 {
     internal sealed class Relationship
     {
-        public Relationship(string name, bool onDeleteCascade, bool onDeleteSetNull, Table primaryKeyTable, Table foreignKeyTable, IReadOnlyCollection<Reference> references)
+        public Relationship(string name, bool onDeleteCascade, bool onDeleteSetNull, Entity primaryKeyEntity, Entity foreignKeyEntity, IReadOnlyCollection<Reference> references)
         {
             Name = name;
             OnDeleteCascade = onDeleteCascade;
             OnDeleteSetNull = onDeleteSetNull;
-            PrimaryKeyTable = primaryKeyTable;
-            ForeignKeyTable = foreignKeyTable;
+            PrimaryKeyEntity = primaryKeyEntity;
+            ForeignKeyEntity = foreignKeyEntity;
             References = references;
         }
 
@@ -21,29 +21,29 @@ namespace NoiseLab.PolyGen.Core.Domain
 
         internal bool OnDeleteSetNull { get; }
 
-        internal Table PrimaryKeyTable { get; }
+        internal Entity PrimaryKeyEntity { get; }
 
-        internal Table ForeignKeyTable { get; }
+        internal Entity ForeignKeyEntity { get; }
 
         internal IReadOnlyCollection<Reference> References { get; }
 
         internal void Apply()
         {
-            PrimaryKeyTable.AddDependentRelationship(
-                new TableRelationship(
+            PrimaryKeyEntity.AddDependentRelationship(
+                new EntityRelationship(
                     Name,
                     OnDeleteCascade,
                     OnDeleteSetNull,
-                    ForeignKeyTable,
-                    References.Select(r => new TableReference(r.PrimaryKeyColumn, r.ForeignKeyColumn))));
+                    ForeignKeyEntity,
+                    References.Select(r => new EntityReference(r.PrimaryKeyProperty, r.ForeignKeyProperty))));
 
-            ForeignKeyTable.AddPrincipalRelationship(
-                new TableRelationship(
+            ForeignKeyEntity.AddPrincipalRelationship(
+                new EntityRelationship(
                     Name,
                     OnDeleteCascade,
                     OnDeleteSetNull,
-                    PrimaryKeyTable,
-                    References.Select(r => new TableReference(r.ForeignKeyColumn, r.PrimaryKeyColumn))));
+                    PrimaryKeyEntity,
+                    References.Select(r => new EntityReference(r.ForeignKeyProperty, r.PrimaryKeyProperty))));
         }
     }
 }

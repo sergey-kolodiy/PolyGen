@@ -8,36 +8,36 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.Relationships
 {
     public class RelationshipBuilder : BuilderBase
     {
-        public FromRelationshipTableBuilder From(string tableSchema, string tableName)
+        public FromRelationshipEntityBuilder From(string entityNamespace, string entityName)
         {
-            return _fromRelationshipTableBuilder = new FromRelationshipTableBuilder(this, tableSchema, tableName);
+            return _fromRelationshipEntityBuilder = new FromRelationshipEntityBuilder(this, entityNamespace, entityName);
         }
 
-        internal RelationshipBuilder(DatabaseBuilder databaseBuilder, string name)
+        internal RelationshipBuilder(ModelBuilder modelBuilder, string name)
         {
             _name = name;
-            _databaseBuilder = databaseBuilder;
+            _modelBuilder = modelBuilder;
         }
 
         private readonly string _name;
-        private FromRelationshipTableBuilder _fromRelationshipTableBuilder;
-        private ToRelationshipTableBuilder _toRelationshipTableBuilder;
+        private FromRelationshipEntityBuilder _fromRelationshipEntityBuilder;
+        private ToRelationshipEntityBuilder _toRelationshipEntityBuilder;
         private bool _onDeleteCascade;
         private bool _onDeleteSetNull;
         private readonly List<ReferenceBuilder> _referenceBuilders = new List<ReferenceBuilder>();
-        private readonly DatabaseBuilder _databaseBuilder;
+        private readonly ModelBuilder _modelBuilder;
 
-        internal ToRelationshipTableBuilder To(string tableSchema, string tableName)
+        internal ToRelationshipEntityBuilder To(string entityNamespace, string entityName)
         {
-            return _toRelationshipTableBuilder = new ToRelationshipTableBuilder(this, tableSchema, tableName);
+            return _toRelationshipEntityBuilder = new ToRelationshipEntityBuilder(this, entityNamespace, entityName);
         }
 
-        internal ReferenceBuilder Reference(string foreignKeyColumnName, string primaryKeyColumnName)
+        internal ReferenceBuilder Reference(string foreignKeyPropertyName, string primaryKeyPropertyName)
         {
-            foreignKeyColumnName.ThrowIfNullOrWhitespace(nameof(foreignKeyColumnName));
-            primaryKeyColumnName.ThrowIfNullOrWhitespace(nameof(primaryKeyColumnName));
+            foreignKeyPropertyName.ThrowIfNullOrWhitespace(nameof(foreignKeyPropertyName));
+            primaryKeyPropertyName.ThrowIfNullOrWhitespace(nameof(primaryKeyPropertyName));
 
-            var referenceBuilder = new ReferenceBuilder(this, primaryKeyColumnName, foreignKeyColumnName);
+            var referenceBuilder = new ReferenceBuilder(this, primaryKeyPropertyName, foreignKeyPropertyName);
             _referenceBuilders.Add(referenceBuilder);
             return referenceBuilder;
         }
@@ -60,11 +60,11 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.Relationships
             }
             foreach (var referenceBuilder in _referenceBuilders)
             {
-                var column = _databaseBuilder.GetColumnBuilder(_fromRelationshipTableBuilder.TableSchema, _fromRelationshipTableBuilder.TableName,
-                    referenceBuilder.ForeignKeyColumnName);
-                if (!column.IsNullable())
+                var property = _modelBuilder.GetPropertyBuilder(_fromRelationshipEntityBuilder.EntityNamespace, _fromRelationshipEntityBuilder.EntityName,
+                    referenceBuilder.ForeignKeyPropertyName);
+                if (!property.IsNullable())
                 {
-                    throw new InvalidOperationException($"Cannot set up SetNull delete behavior for relationship \"{_name}\" bacause foreign key column \"{referenceBuilder.ForeignKeyColumnName}\" is not nullable.");
+                    throw new InvalidOperationException($"Cannot set up SetNull delete behavior for relationship \"{_name}\" bacause foreign key property \"{referenceBuilder.ForeignKeyPropertyName}\" is not nullable.");
                 }
             }
 
@@ -74,52 +74,52 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.Relationships
 
         internal RelationshipBuilder Relationship(string name)
         {
-            return _databaseBuilder.Relationship(name);
+            return _modelBuilder.Relationship(name);
         }
 
-        internal Database Build()
+        internal Model Build()
         {
-            return _databaseBuilder.Build();
+            return _modelBuilder.Build();
         }
 
         internal Relationship BuildRelationship()
         {
-            var primaryKeyTableBuilder = _databaseBuilder.GetTableBuilder(_toRelationshipTableBuilder.TableSchema, _toRelationshipTableBuilder.TableName);
-            if (primaryKeyTableBuilder == null)
+            var primaryKeyEntityBuilder = _modelBuilder.GetEntityBuilder(_toRelationshipEntityBuilder.EntityNamespace, _toRelationshipEntityBuilder.EntityName);
+            if (primaryKeyEntityBuilder == null)
             {
-                throw new InvalidOperationException($"Invalid relationship definition: \"{_name}\". Primary key table \"{_toRelationshipTableBuilder.TableSchema}.{_toRelationshipTableBuilder.TableName}\" is not defined.");
+                throw new InvalidOperationException($"Invalid relationship definition: \"{_name}\". Primary key entity \"{_toRelationshipEntityBuilder.EntityNamespace}.{_toRelationshipEntityBuilder.EntityName}\" is not defined.");
             }
 
-            var foreignKeyTableBuilder = _databaseBuilder.GetTableBuilder(_fromRelationshipTableBuilder.TableSchema, _fromRelationshipTableBuilder.TableName);
-            if (foreignKeyTableBuilder == null)
+            var foreignKeyEntityBuilder = _modelBuilder.GetEntityBuilder(_fromRelationshipEntityBuilder.EntityNamespace, _fromRelationshipEntityBuilder.EntityName);
+            if (foreignKeyEntityBuilder == null)
             {
-                throw new InvalidOperationException($"Invalid relationship definition: \"{_name}\". Foreign key table \"{_fromRelationshipTableBuilder.TableSchema}.{_fromRelationshipTableBuilder.TableName}\" is not defined.");
+                throw new InvalidOperationException($"Invalid relationship definition: \"{_name}\". Foreign key entity \"{_fromRelationshipEntityBuilder.EntityNamespace}.{_fromRelationshipEntityBuilder.EntityName}\" is not defined.");
             }
 
-            var references = _referenceBuilders.Select(r => BuildReference(r, primaryKeyTableBuilder, foreignKeyTableBuilder)).ToList();
+            var references = _referenceBuilders.Select(r => BuildReference(r, primaryKeyEntityBuilder, foreignKeyEntityBuilder)).ToList();
 
-            var primaryKeyTable = primaryKeyTableBuilder.BuildTable();
-            var foreignKeyTable = foreignKeyTableBuilder.BuildTable();
+            var primaryKeyEntity = primaryKeyEntityBuilder.BuildEntity();
+            var foreignKeyEntity = foreignKeyEntityBuilder.BuildEntity();
 
-            return new Relationship(_name, _onDeleteCascade, _onDeleteSetNull, primaryKeyTable, foreignKeyTable, references);
+            return new Relationship(_name, _onDeleteCascade, _onDeleteSetNull, primaryKeyEntity, foreignKeyEntity, references);
 
-            Reference BuildReference(ReferenceBuilder referenceBuilder, TableBuilder pkTableBuilder, TableBuilder fkTableBuilder)
+            Reference BuildReference(ReferenceBuilder referenceBuilder, EntityBuilder pkEntityBuilder, EntityBuilder fkEntityBuilder)
             {
-                var primaryKeyColumn = pkTableBuilder.GetColumnBuilder(referenceBuilder.PrimaryKeyColumnName);
-                if (primaryKeyColumn == null)
+                var primaryKeyProperty = pkEntityBuilder.GetPropertyBuilder(referenceBuilder.PrimaryKeyPropertyName);
+                if (primaryKeyProperty == null)
                 {
-                    throw new InvalidOperationException($"Invalid relationship definition: \"{_name}\". Column \"{referenceBuilder.PrimaryKeyColumnName}\" is not defined in primary key table \"{_toRelationshipTableBuilder.TableSchema}.{_toRelationshipTableBuilder.TableName}\".");
+                    throw new InvalidOperationException($"Invalid relationship definition: \"{_name}\". Property \"{referenceBuilder.PrimaryKeyPropertyName}\" is not defined in primary key entity \"{_toRelationshipEntityBuilder.EntityNamespace}.{_toRelationshipEntityBuilder.EntityName}\".");
                 }
 
-                var foreignKeyColumn = fkTableBuilder.GetColumnBuilder(referenceBuilder.ForeignKeyColumnName);
-                if (foreignKeyColumn == null)
+                var foreignKeyProperty = fkEntityBuilder.GetPropertyBuilder(referenceBuilder.ForeignKeyPropertyName);
+                if (foreignKeyProperty == null)
                 {
-                    throw new InvalidOperationException($"Invalid relationship definition: \"{_name}\". Column \"{referenceBuilder.ForeignKeyColumnName}\" is not defined in foreign key table \"{_fromRelationshipTableBuilder.TableSchema}.{_fromRelationshipTableBuilder.TableName}\".");
+                    throw new InvalidOperationException($"Invalid relationship definition: \"{_name}\". Property \"{referenceBuilder.ForeignKeyPropertyName}\" is not defined in foreign key entity \"{_fromRelationshipEntityBuilder.EntityNamespace}.{_fromRelationshipEntityBuilder.EntityName}\".");
                 }
 
-                primaryKeyColumn.CheckReference(foreignKeyColumn);
+                primaryKeyProperty.CheckReference(foreignKeyProperty);
 
-                return new Reference(primaryKeyColumn.BuildColumn(), foreignKeyColumn.BuildColumn());
+                return new Reference(primaryKeyProperty.BuildProperty(), foreignKeyProperty.BuildProperty());
             }
         }
 

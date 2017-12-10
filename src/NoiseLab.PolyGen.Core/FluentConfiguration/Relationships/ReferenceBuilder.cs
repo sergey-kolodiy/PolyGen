@@ -4,9 +4,9 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.Relationships
 {
     public class ReferenceBuilder : BuilderBase
     {
-        public ReferenceBuilder Reference(string foreignKeyColumnName, string primaryKeyColumnName)
+        public ReferenceBuilder Reference(string foreignKeyPropertyName, string primaryKeyPropertyName)
         {
-            return _relationshipBuilder.Reference(foreignKeyColumnName, primaryKeyColumnName);
+            return _relationshipBuilder.Reference(foreignKeyPropertyName, primaryKeyPropertyName);
         }
 
         public RelationshipBuilder Relationship(string name)
@@ -26,20 +26,20 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.Relationships
             return new DeleteBehaviorBuilder(this);
         }
 
-        public Database Build()
+        public Model Build()
         {
             return _relationshipBuilder.Build();
         }
 
-        internal ReferenceBuilder(RelationshipBuilder relationshipBuilder, string primaryKeyColumnName, string foreignKeyColumnName)
+        internal ReferenceBuilder(RelationshipBuilder relationshipBuilder, string primaryKeyPropertyName, string foreignKeyPropertyName)
         {
-            PrimaryKeyColumnName = primaryKeyColumnName;
-            ForeignKeyColumnName = foreignKeyColumnName;
+            PrimaryKeyPropertyName = primaryKeyPropertyName;
+            ForeignKeyPropertyName = foreignKeyPropertyName;
             _relationshipBuilder = relationshipBuilder;
         }
 
-        internal readonly string PrimaryKeyColumnName;
-        internal readonly string ForeignKeyColumnName;
+        internal readonly string PrimaryKeyPropertyName;
+        internal readonly string ForeignKeyPropertyName;
         private readonly RelationshipBuilder _relationshipBuilder;
     }
 }

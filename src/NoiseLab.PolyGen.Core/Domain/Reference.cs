@@ -2,14 +2,14 @@ namespace NoiseLab.PolyGen.Core.Domain
 {
     internal sealed class Reference
     {
-        internal Reference(Column primaryKeyColumn, Column foreignKeyColumn)
+        internal Reference(Property primaryKeyProperty, Property foreignKeyProperty)
         {
-            PrimaryKeyColumn = primaryKeyColumn;
-            ForeignKeyColumn = foreignKeyColumn;
+            PrimaryKeyProperty = primaryKeyProperty;
+            ForeignKeyProperty = foreignKeyProperty;
         }
 
-        internal Column PrimaryKeyColumn { get; }
+        internal Property PrimaryKeyProperty { get; }
 
-        internal Column ForeignKeyColumn { get; }
+        internal Property ForeignKeyProperty { get; }
     }
 }

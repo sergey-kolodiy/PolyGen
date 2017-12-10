@@ -9,7 +9,7 @@ namespace NoiseLab.PolyGen.Core.FluentConfiguration.Relationships
             return _referenceBuilder.Relationship(name);
         }
 
-        public Database Build()
+        public Model Build()
         {
             return _referenceBuilder.Build();
         }

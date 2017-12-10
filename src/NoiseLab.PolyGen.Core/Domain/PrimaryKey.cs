@@ -8,12 +8,12 @@ namespace NoiseLab.PolyGen.Core.Domain
 {
     internal sealed class PrimaryKey
     {
-        internal PrimaryKey(IReadOnlyList<Column> columns)
+        internal PrimaryKey(IReadOnlyList<Property> properties)
         {
-            Columns = columns;
+            Properties = properties;
         }
 
-        internal IReadOnlyList<Column> Columns { get; }
+        internal IReadOnlyList<Property> Properties { get; }
 
         internal string GeneratePrimaryKeyDefinitionForModelBuilder(string objectName)
         {
@@ -24,7 +24,7 @@ namespace NoiseLab.PolyGen.Core.Domain
              * modelBuilder.Entity<user_Person_OrmModel>().HasKey(o => new { o.@P1, o.@P2, o.@P3 });
              *                                                               ^^^^^^^^^^^^^^^^^^^
              */
-            return string.Join(", ", Columns.Select(key => $"{objectName}.{key.Name.GenerateVerbatimIdentifierString()}"));
+            return string.Join(", ", Properties.Select(key => $"{objectName}.{key.Name.GenerateVerbatimIdentifierString()}"));
         }
 
         internal ParameterSyntax[] GenerateParameterList()
@@ -36,7 +36,7 @@ namespace NoiseLab.PolyGen.Core.Domain
              * public IActionResult GetById (System.String @P1, ...) { ... }
              *                               ^^^^^^^^^^^^^^^^^^^^^^
              */
-            return Columns.Select(c => SyntaxFactory
+            return Properties.Select(c => SyntaxFactory
                 .Parameter(c.Name.GenerateVerbatimIdentifier())
                 .WithType(c.GeneratePropertyTypeSyntax())).ToArray();
         }
@@ -50,7 +50,7 @@ namespace NoiseLab.PolyGen.Core.Domain
              * var entity = _context.DBSet.Find(@P1, @P2, @P3)
              *                                  ^^^^^^^^^^^^^
              */
-            return string.Join(", ", Columns.Select(c => $"{c.Name.GenerateVerbatimIdentifierString()}"));
+            return string.Join(", ", Properties.Select(c => $"{c.Name.GenerateVerbatimIdentifierString()}"));
         }
 
         internal string GenerateRouteTemplate()
@@ -62,7 +62,7 @@ namespace NoiseLab.PolyGen.Core.Domain
              * [HttpGet("{P1}/{P2}/{P3}")]
              *           ^^^^^^^^^^^^^^
              */
-            return string.Join("/", Columns.Select(c => $"{{{c.Name}}}"));
+            return string.Join("/", Properties.Select(c => $"{{{c.Name}}}"));
         }
 
         internal string GenerateEntityUri()
@@ -71,10 +71,10 @@ namespace NoiseLab.PolyGen.Core.Domain
              * {ormModel.@P1}/{ormModel.@P2}/{ormModel.@P3}
              * 
              * Context:
-             * return Created($"api/schema_Table/{ormModel.@P1}/{ormModel.@P2}/...", entity);
-             *                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+             * return Created($"api/namespace_Entity/{ormModel.@P1}/{ormModel.@P2}/...", entity);
+             *                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
              */
-            return string.Join("/", Columns.Select(c => $"{{ormModel.{c.Name.GenerateVerbatimIdentifierString()}}}"));
+            return string.Join("/", Properties.Select(c => $"{{ormModel.{c.Name.GenerateVerbatimIdentifierString()}}}"));
         }
 
         internal string GenerateRouteIdEqualsToEntityId()
@@ -87,7 +87,7 @@ namespace NoiseLab.PolyGen.Core.Domain
              *       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
              */
             return string.Join(" && ",
-                Columns.Select(c =>
+                Properties.Select(c =>
                 $"{c.Name.GenerateVerbatimIdentifierString()} == entity.{c.Name.GenerateVerbatimIdentifierString()}"));
         }
     }

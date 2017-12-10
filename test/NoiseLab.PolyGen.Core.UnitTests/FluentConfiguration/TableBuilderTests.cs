@@ -4,41 +4,41 @@ using Xunit;
 
 namespace NoiseLab.PolyGen.Core.UnitTests.FluentConfiguration
 {
-    public class TableBuilderTests
+    public class EntityBuilderTests
     {
         [Fact]
-        public void PrimaryKeyColumn_NameIsNull_ThrowsArgumentException()
+        public void PrimaryKeyProperty_NameIsNull_ThrowsArgumentException()
         {
             // Arrange
-            var builder = DatabaseBuilder.Create()
-                .Table("Test", "Test");
+            var builder = ModelBuilder.Create()
+                .Entity("Test", "Test");
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => builder.PrimaryKeyColumn(null));
+            Assert.Throws<ArgumentException>(() => builder.PrimaryKeyProperty(null));
         }
 
         [Fact]
-        public void PrimaryKeyColumn_NameDoesNotMatchDefaultPattern_ThrowsArgumentException()
+        public void PrimaryKeyProperty_NameDoesNotMatchDefaultPattern_ThrowsArgumentException()
         {
             // Arrange
-            var builder = DatabaseBuilder.Create()
-                .Table("Test", "Test");
+            var builder = ModelBuilder.Create()
+                .Entity("Test", "Test");
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => builder.PrimaryKeyColumn("1Test"));
+            Assert.Throws<ArgumentException>(() => builder.PrimaryKeyProperty("1Test"));
         }
 
         [Fact]
-        public void PrimaryKeyColumn_ColumnAlreadyExists_ThrowsInvalidOperationException()
+        public void PrimaryKeyProperty_PropertyAlreadyExists_ThrowsInvalidOperationException()
         {
             // Arrange
-            var builder = DatabaseBuilder.Create()
-                .Table("Test", "Test");
+            var builder = ModelBuilder.Create()
+                .Entity("Test", "Test");
 
             // Act & Assert
             Assert.Throws<InvalidOperationException>(() => builder
-                .PrimaryKeyColumn("Test").String()
-                .PrimaryKeyColumn("Test"));
+                .PrimaryKeyProperty("Test").String()
+                .PrimaryKeyProperty("Test"));
         }
     }
 }
