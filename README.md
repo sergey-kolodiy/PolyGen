@@ -1,59 +1,59 @@
 # PolyGen
 
-PolyGen is a code generator that produces ORM layer, REST API and a (coming soon — stay tuned!) single-page web UI for your relational database.
+PolyGen is a code generator that produces database schems, ORM layer, REST API and a (coming soon — stay tuned!) single-page web UI for your business model.
 
 [![Build Status](https://travis-ci.org/dr-noise/PolyGen.svg?branch=master)](https://travis-ci.org/dr-noise/PolyGen)
 [![Join the chat at https://gitter.im/PolyGen/Lobby](https://badges.gitter.im/PolyGen/Lobby.svg)](https://gitter.im/PolyGen/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Getting Started
 
-1. Define your database structure using Fluent Configuration API:
+1. Define your business model using Fluent Configuration API:
 
 ```csharp
-var database = DatabaseBuilder.Create()
-    .Table("user", "Person")
-        .PrimaryKeyColumn("SSN").String().MaxLength(9)
-        .PrimaryKeyColumn("FirstName").String().MaxLength(100)
-        .PrimaryKeyColumn("LastName").String().MaxLength(100)
-        .Column("Nickname").String().MaxLength(100).Nullable()
-        .Column("BirthDate").Date()
-        .Column("Age").Int32().Computed()
-        .Column("RowVersion").RowVersion()
-    .Table("blogging", "Blog")
-        .PrimaryKeyColumn("Id").Int32().Identity()
-        .Column("AuthorSSN").String().MaxLength(9)
-        .Column("AuthorFirstName").String().MaxLength(100)
-        .Column("AuthorLastName").String().MaxLength(100)
-        .Column("Title").String().MaxLength(200)
-        .Column("Description").String().MaxLength(500)
-        .Column("URL").String().MaxLength(1000)
-        .Column("Founded").Date()
-    .Table("blogging", "Post")
-        .PrimaryKeyColumn("Id").Int32().Identity()
-        .Column("BlogId").Int32()
-        .Column("Title").String().MaxLength(200)
-        .Column("Summary").String().MaxLength(1000)
-        .Column("Content").String()
-        .Column("EditorSSN").String().MaxLength(9).Nullable()
-        .Column("EditorFirstName").String().MaxLength(100).Nullable()
-        .Column("EditorLastName").String().MaxLength(100).Nullable()
-        .Column("Rating").Byte()
-    .Table("blogging", "Tag")
-        .PrimaryKeyColumn("Id").Int32().Identity()
-        .Column("Name").String().MaxLength(200)
-        .Column("Description").String().MaxLength(500)
-    .Table("blogging", "PostTag")
-        .PrimaryKeyColumn("Id").Int32().Identity()
-        .Column("PostId").Int32()
-        .Column("TagId").Int32()
-    .Table("blogging", "Comment")
-        .PrimaryKeyColumn("Id").Int32().Identity()
-        .Column("PostId").Int32()
-        .Column("AuthorSSN").String().MaxLength(9)
-        .Column("AuthorFirstName").String().MaxLength(100)
-        .Column("AuthorLastName").String().MaxLength(100)
-        .Column("Content").String()
-        .Column("DateTime").String()
+var model = ModelBuilder.Create()
+    .Entity("user", "Person")
+        .PrimaryKeyProperty("SSN").String().MaxLength(9)
+        .PrimaryKeyProperty("FirstName").String().MaxLength(100)
+        .PrimaryKeyProperty("LastName").String().MaxLength(100)
+        .Property("Nickname").String().MaxLength(100).Nullable()
+        .Property("BirthDate").Date()
+        .Property("Age").Int32().Computed()
+        .Property("RowVersion").RowVersion()
+    .Entity("blogging", "Blog")
+        .PrimaryKeyProperty("Id").Int32().Identity()
+        .Property("AuthorSSN").String().MaxLength(9)
+        .Property("AuthorFirstName").String().MaxLength(100)
+        .Property("AuthorLastName").String().MaxLength(100)
+        .Property("Title").String().MaxLength(200)
+        .Property("Description").String().MaxLength(500)
+        .Property("URL").String().MaxLength(1000)
+        .Property("Founded").Date()
+    .Entity("blogging", "Post")
+        .PrimaryKeyProperty("Id").Int32().Identity()
+        .Property("BlogId").Int32()
+        .Property("Title").String().MaxLength(200)
+        .Property("Summary").String().MaxLength(1000)
+        .Property("Content").String()
+        .Property("EditorSSN").String().MaxLength(9).Nullable()
+        .Property("EditorFirstName").String().MaxLength(100).Nullable()
+        .Property("EditorLastName").String().MaxLength(100).Nullable()
+        .Property("Rating").Byte()
+    .Entity("blogging", "Tag")
+        .PrimaryKeyProperty("Id").Int32().Identity()
+        .Property("Name").String().MaxLength(200)
+        .Property("Description").String().MaxLength(500)
+    .Entity("blogging", "PostTag")
+        .PrimaryKeyProperty("Id").Int32().Identity()
+        .Property("PostId").Int32()
+        .Property("TagId").Int32()
+    .Entity("blogging", "Comment")
+        .PrimaryKeyProperty("Id").Int32().Identity()
+        .Property("PostId").Int32()
+        .Property("AuthorSSN").String().MaxLength(9)
+        .Property("AuthorFirstName").String().MaxLength(100)
+        .Property("AuthorLastName").String().MaxLength(100)
+        .Property("Content").String()
+        .Property("DateTime").String()
     .Relationship("FK_Author_Blogs")
         .From("blogging", "Blog")
         .To("user", "Person")
@@ -93,20 +93,20 @@ var database = DatabaseBuilder.Create()
     .Build();
 ```
 
-2. Generate code for the database schema:
+2. Generate code for the business model:
 
 ```csharp
-string code = database.GenerateCode();
+string code = model.GenerateCode();
 ```
 
 3. PolyGen will generate the following classes for you:
 
  - ORM model (Entity Framerork Core is used), including `DbContext`;
  - ASP.NET Core `Startup` and `Program` classes;
- - Web API controller for each database table, including `Get`, `GetById`, `Post`, `Put` and `Delete` methods;
+ - Web API controller for each business model entity, including `Get`, `GetById`, `Post`, `Put` and `Delete` methods;
  - Validation models for `Post` and `Put` controller methods (required to prevent under- and overposting);
 
-For a database structure defined in step 1, the following code will be generated:
+For a business model defined in step 1, the following code will be generated:
 
 ```csharp
 namespace NoiseLab.PolyGen.Generated
