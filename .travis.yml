@@ -1,7 +1,7 @@
 language: csharp
 solution: NoiseLab.PolyGen.sln
 mono: none
-dotnet: 2.1.0
+dotnet: 2.1
 dist: trusty
 branches:
   only:
