@@ -1,8 +1,8 @@
-# PolyGen
+﻿# PolyGen
 
 PolyGen is a code generator that produces database schema, ORM layer, REST API and a (coming soon — stay tuned!) single-page web UI for your business model.
 
-[![Build Status](https://travis-ci.org/dr-noise/PolyGen.svg?branch=master)](https://travis-ci.org/dr-noise/PolyGen)
+[![Build Status](https://travis-ci.org/sergey-kolodiy/PolyGen.svg?branch=master)](https://travis-ci.org/sergey-kolodiy/PolyGen)
 [![Join the chat at https://gitter.im/PolyGen/Lobby](https://badges.gitter.im/PolyGen/Lobby.svg)](https://gitter.im/PolyGen/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Getting Started
@@ -1574,13 +1574,13 @@ namespace NoiseLab.PolyGen.Generated
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/dr-noise/PolyGen/tags).
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/sergey-kolodiy/PolyGen/tags).
 
 ## Authors
 
 * **Sergey Kolodiy**
 
-See also the list of [contributors](https://github.com/dr-noise/PolyGen/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/sergey-kolodiy/PolyGen/contributors) who participated in this project.
 
 ## License
 
